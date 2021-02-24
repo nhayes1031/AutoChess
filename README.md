@@ -16,11 +16,12 @@ The server is done using a custom game engine. The networking is done using Lidg
 
 ## Showcase
 
-![Client clicking around](https://github.com/nhayes1031/AutoChess/tree/master/Showcase/ClientShowcase_02_24_21.gif)
+![Client clicking around](Showcase/ClientShowcase_02_24_21.gif)
+
 Client is able to:
+
 	- Connect to game server running on localhost
 	- Reroll
 	- Buy Units
 	- Buy XP
-
-	*Gold is functioning but for the showcase the costs of everything was set to 0*
+_*Gold is functioning but for the showcase the costs of everything was set to 0_
