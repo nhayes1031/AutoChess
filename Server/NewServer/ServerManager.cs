@@ -7,7 +7,7 @@ namespace Server {
     public class ServerManager {
         public static ServerManager instance;
 
-        private const int NUMBER_OF_SERVERS_TO_PRELOAD = 1;
+        private const int NUMBER_OF_SERVERS_TO_PRELOAD = 2;
 
         private MatchmakingServer mmserver;
         private List<GameServer> gservers;

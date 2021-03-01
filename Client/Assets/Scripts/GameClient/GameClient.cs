@@ -111,10 +111,9 @@ namespace Client.Game {
             client.Disconnect("Bye!");
         }
 
-        // TODO: Redo reroll network traffic
         public void SendRerollRequest() {
             NetOutgoingMessage message = client.CreateMessage();
-            //new ShopUpdatePacket().PacketToNetOutgoingMessage(message);
+            new PurchaseRerollPacket().PacketToNetOutgoingMessage(message);
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }
 
@@ -123,6 +122,12 @@ namespace Client.Game {
             new PurchaseUnitPacket() {
                 Name = name
             }.PacketToNetOutgoingMessage(message);
+            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void SendPurchaseXPRequest() {
+            NetOutgoingMessage message = client.CreateMessage();
+            new PurchaseXPPacket().PacketToNetOutgoingMessage(message);
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }
     }

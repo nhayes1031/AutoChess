@@ -5,6 +5,8 @@
         InitialGameSetup,
         TransitionUpdate,
         UpdatePlayerInfo,
-        PurchaseUnit
+        PurchaseUnit,
+        PurchaseXP,
+        PurchaseReroll
     }
 }

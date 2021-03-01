@@ -197,91 +197,91 @@
     public class Enchanter : Character {
         public Enchanter() {
             Name = "Enchanter";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Sage : Character {
         public Sage() {
             Name = "Sage";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Warlock : Character {
         public Warlock() {
             Name = "Warlock";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Monk : Character {
         public Monk() {
             Name = "Monk";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Templar : Character {
         public Templar() {
             Name = "Templar";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Sentinel : Character {
         public Sentinel() {
             Name = "Sentinel";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Battlemage : Character {
         public Battlemage() {
             Name = "Battlemage";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Protector : Character {
         public Protector() {
             Name = "Protector";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Mystic : Character {
         public Mystic() {
             Name = "Mystic";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Elementalist : Character {
         public Elementalist() {
             Name = "Elementalist";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Conjurer : Character {
         public Conjurer() {
             Name = "Conjurer";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Arbiter : Character {
         public Arbiter() {
             Name = "Arbiter";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
     public class Shaman : Character {
         public Shaman() {
             Name = "Shaman";
-            Cost = 2;
+            Cost = 3;
             Level = 1;
         }
     }
@@ -291,90 +291,138 @@
     public class Seer : Character {
         public Seer() {
             Name = "Seer";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     public class Revenant : Character {
         public Revenant() {
             Name = "Revenant";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     public class Trickster : Character {
         public Trickster() {
             Name = "Trickster";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     public class Provoker : Character {
         public Provoker() {
             Name = "Provoker";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     public class Keeper : Character {
         public Keeper() {
             Name = "Keeper";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     public class Invoker : Character {
         public Invoker() {
             Name = "Invoker";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     public class Wanderer : Character {
         public Wanderer() {
             Name = "Wanderer";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     public class Siren : Character {
         public Siren() {
             Name = "Siren";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     public class Crusader : Character {
         public Crusader() {
             Name = "Crusader";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     public class Reaper : Character {
         public Reaper() {
             Name = "Reaper";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     public class Broodwarden : Character {
         public Broodwarden() {
             Name = "Broodwarden";
-            Cost = 2;
+            Cost = 4;
             Level = 1;
         }
     }
     #endregion
 
     #region Tier 5          x8 
-    public class Dreadnought : Character { }
-    public class Stalker : Character { }
-    public class Illusionist : Character { }
-    public class Strider : Character { }
-    public class Betrayer : Character { }
-    public class Naturalist : Character { }
-    public class Charlatan : Character { }
-    public class Vindicator : Character { }
+    public class Dreadnought : Character {
+        public Dreadnought() {
+            Name = "Dreadnought";
+            Cost = 5;
+            Level = 1;
+        }
+    }
+    public class Stalker : Character {
+        public Stalker() {
+            Name = "Stalker";
+            Cost = 5;
+            Level = 1;
+        }
+    }
+    public class Illusionist : Character {
+        public Illusionist() {
+            Name = "Illusionist";
+            Cost = 5;
+            Level = 1;
+        }
+    }
+    public class Strider : Character {
+        public Strider() {
+            Name = "Strider";
+            Cost = 5;
+            Level = 1;
+        }
+    }
+    public class Betrayer : Character {
+        public Betrayer() {
+            Name = "Betrayer";
+            Cost = 5;
+            Level = 1;
+        }
+    }
+    public class Naturalist : Character {
+        public Naturalist() {
+            Name = "Naturalist";
+            Cost = 5;
+            Level = 1;
+        }
+    }
+    public class Charlatan : Character {
+        public Charlatan() {
+            Name = "Charlatan";
+            Cost = 5;
+            Level = 1;
+        }
+    }
+    public class Vindicator : Character {
+        public Vindicator() {
+            Name = "Vindicator";
+            Cost = 5;
+            Level = 1;
+        }
+    }
     #endregion
 }

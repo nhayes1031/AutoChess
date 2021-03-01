@@ -2,7 +2,6 @@
 using Server.Game.Timeline;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Server.Game {
     public class GameLogic {
@@ -19,6 +18,7 @@ namespace Server.Game {
         private GameTimeline timeline;
         private PlayerInitializer playerIntializer;
         private GameState state;
+        private Battle[] battles;
 
         private bool startingRound = true;
 
@@ -37,6 +37,10 @@ namespace Server.Game {
             timeline.Finished += () => Finished?.Invoke();
             timeline.Changed += HandleTimelineChanged;
             timeline.RoundStart += HandleRoundStart;
+
+            // TODO: Battles will be instantiated when the timeline says we are battling.
+            // TODO: Battles will be deallocated when the timeline says we aren't battling.
+            battles = new Battle[4];
         }
 
         public void Initialize() {
@@ -50,6 +54,9 @@ namespace Server.Game {
                     break;
                 case GameState.Running:
                     timeline.Update(time, deltaTime);
+                    foreach (var battle in battles) {
+                        //battle.Update(time, deltaTime);
+                    }
                     break;
             }
         }
@@ -63,17 +70,70 @@ namespace Server.Game {
             state = GameState.Idle;
         }
 
-        public void Reroll(NetConnection client) {
+        public void PurchaseReroll(NetConnection client) {
             var playerData = playerDatas[client];
-            var newShop = shop.RequestReroll(playerData);
-            playerData.UpdateShop(newShop);
+            var status = playerData.PayForReroll();
+            if (status) {
+                var newShop = shop.RequestReroll(playerData);
+                playerData.UpdateShop(newShop);
+            }
             SendUpdatePlayerInfoPacket(client, playerData);
         }
 
-        public void PurchaseUnit(PurchaseUnitRequest request) {
-            var status = playerDatas[request.connection].Purchase(request.Name);
+        public void PurchaseUnit(PurchaseUnitPacket packet, NetConnection connection) {
+            var status = playerDatas[connection].Purchase(packet.Name);
             if (status) {
-                SendPurchaseUnitPacket(request.connection, request.Name);
+                SendPurchaseUnitPacket(connection, packet.Name);
+            }
+        }
+
+        public void PurchaseXP(NetConnection connection) {
+            var playerData = playerDatas[connection];
+            playerData.PurchaseXP();
+            SendUpdatePlayerInfoPacket(connection, playerData);
+        }
+
+        public void MoveUnit(MoveToBenchFromBoardPacket packet, NetConnection connection) {
+            var status = playerDatas[connection].MoveUnit(
+                CharacterFactory.CreateFromName(packet.Character), 
+                packet.FromCoords, 
+                packet.ToSeat
+            );
+            if (status) {
+                SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
+            }
+        }
+
+        public void MoveUnit(RepositionOnBoardPacket packet, NetConnection connection) {
+            var status = playerDatas[connection].MoveUnit(
+                CharacterFactory.CreateFromName(packet.Character), 
+                packet.FromCoords, 
+                packet.ToCoords
+            );
+            if (status) {
+                SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
+            }
+        }
+
+        public void MoveUnit(MoveToBoardFromBenchPacket packet, NetConnection connection) {
+            var status = playerDatas[connection].MoveUnit(
+                CharacterFactory.CreateFromName(packet.Character), 
+                packet.FromSeat, 
+                packet.ToCoords
+            );
+            if (status) {
+                SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
+            }
+        }
+
+        public void MoveUnit(RepositionOnBenchPacket packet, NetConnection connection) {
+            var status = playerDatas[connection].MoveUnit(
+                CharacterFactory.CreateFromName(packet.Character), 
+                packet.FromSeat, 
+                packet.ToSeat
+            );
+            if (status) {
+                SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
             }
         }
 

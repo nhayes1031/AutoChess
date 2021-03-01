@@ -22,8 +22,13 @@ namespace Server.Game {
 
             gameLogic.Finished += () => Finished?.Invoke();
 
-            gameMessageHandler.RerollRequested += (client) => gameLogic.Reroll(client);
-            gameMessageHandler.UnitPurchaseRequested += (request) => gameLogic.PurchaseUnit(request);
+            gameMessageHandler.RerollRequested += (client) => gameLogic.PurchaseReroll(client);
+            gameMessageHandler.UnitPurchaseRequested += (packet, connection) => gameLogic.PurchaseUnit(packet, connection);
+            gameMessageHandler.XPPurchaseRequested += (connection) => gameLogic.PurchaseXP(connection);
+            gameMessageHandler.MoveToBoard += (packet, connection) => gameLogic.MoveUnit(packet, connection);
+            gameMessageHandler.MoveToBench += (packet, connection) => gameLogic.MoveUnit(packet, connection);
+            gameMessageHandler.RepositionOnBoard += (packet, connection) => gameLogic.MoveUnit(packet, connection);
+            gameMessageHandler.RepositionOnBench += (packet, connection) => gameLogic.MoveUnit(packet, connection);
 
             gameLogic.Lock += HandleGameLogicLocking;
         }

@@ -1,5 +1,4 @@
-﻿using Client.Game;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Client.UI {
@@ -38,8 +37,10 @@ namespace Client.UI {
         private void HandleShopUpdate(string[] shop) {
             if (characterSlots.Length == shop.Length) {
                 for (int i = 0; i < shop.Length; i++) {
-                    characterSlots[i].gameObject.SetActive(true);
-                    characterSlots[i].Initialize(shop[i]);
+                    if (shop[i] != "") {
+                        characterSlots[i].gameObject.SetActive(true);
+                        characterSlots[i].Initialize(shop[i]);
+                    }
                 }
             } else {
                 Debug.LogError("Shop tried to update with too many elements");

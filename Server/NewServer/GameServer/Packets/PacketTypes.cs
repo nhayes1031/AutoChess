@@ -5,7 +5,13 @@
         InitialGameSetup,
         TransitionUpdate,
         UpdatePlayerInfo,
-        PurchaseUnit
+        PurchaseUnit,
+        PurchaseXP,
+        PurchaseReroll,
+        MoveToBoardFromBench,
+        RepositionOnBoard,
+        MoveToBenchFromBoard,
+        RepositionOnBench
     }
 }
 

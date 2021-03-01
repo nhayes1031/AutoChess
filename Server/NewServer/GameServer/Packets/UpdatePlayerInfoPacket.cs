@@ -1,9 +1,10 @@
 ﻿using Lidgren.Network;
+using System.Collections.Generic;
 
 namespace Server.Game {
     public class UpdatePlayerInfoPacket : Packet {
         public int Level;
-        public string[] Shop;
+        public IEnumerable<string> Shop;
         public int Gold;
         public int XP;
 
