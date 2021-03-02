@@ -10,6 +10,8 @@ namespace Client.UI {
         private void Start() {
             StaticManager.GameClient.Ports += HandlePorts;
             StaticManager.GameClient.Connected += HandleConnected;
+
+            canvas.SetActive(false);
         }
 
         private void OnApplicationQuit() {

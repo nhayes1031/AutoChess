@@ -7,10 +7,13 @@ namespace Client.UI {
         [SerializeField] private GameObject characterPrefab = null;
 
         private UIShopCharacterSlot[] characterSlots;
+        private bool canPurchase = true;
 
         private void Start() {
             StaticManager.GameClient.ShopUpdate += HandleShopUpdate;
             StaticManager.GameClient.UnitPurchased += HandleUnitPurchased;
+
+            FindObjectOfType<UIBench>().BenchFull += HandleFullBench;
 
             characterSlots = new UIShopCharacterSlot[5] {
                 Instantiate(characterPrefab, grid.transform).GetComponent<UIShopCharacterSlot>(),
@@ -28,10 +31,19 @@ namespace Client.UI {
         private void OnApplicationQuit() {
             StaticManager.GameClient.ShopUpdate -= HandleShopUpdate;
             StaticManager.GameClient.UnitPurchased -= HandleUnitPurchased;
+
+            FindObjectOfType<UIBench>().BenchFull -= HandleFullBench;
         }
 
         private void HandleSlotSelected(UIShopCharacterSlot slot) {
-            StaticManager.GameClient.Purchase(slot.Name);
+            Debug.Log(canPurchase);
+            if (canPurchase) {
+                StaticManager.GameClient.Purchase(slot.Name);
+            }
+        }
+
+        private void HandleFullBench(bool status) {
+            canPurchase = !status;
         }
 
         private void HandleShopUpdate(string[] shop) {
@@ -51,6 +63,7 @@ namespace Client.UI {
             foreach (var slot in characterSlots) {
                 if (slot.Name == name) {
                     slot.gameObject.SetActive(false);
+                    slot.Clear();
                     return;
                 }
             }

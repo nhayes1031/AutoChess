@@ -1,28 +1,17 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Client.UI {
-    public class UIShopCharacterSlot : MonoBehaviour {
-        public Action<UIShopCharacterSlot> SlotSelected;
-
+    public class UIBenchSlot : MonoBehaviour {
         [SerializeField] private TextMeshProUGUI text = null;
         [SerializeField] private Image background = null;
 
-        public string Name => text.text;
+        public bool HasUnit => text.text != "" ? true : false;
 
-        public void Initialize(string name) {
+        public void AddUnit(string name) {
             text.text = name;
             background.color = GetColorFromName(name);
-        }
-
-        public void Purchase() {
-            SlotSelected?.Invoke(this);
-        }
-
-        public void Clear() {
-            text.text = "";
         }
 
         private Color GetColorFromName(string name) {
