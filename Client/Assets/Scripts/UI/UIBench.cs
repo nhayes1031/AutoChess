@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Client.Game;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Client.UI {
     public class UIBench : MonoBehaviour {
         public Action<bool> BenchFull;
+        public Action<int, string> SeatSelected;
 
         [SerializeField] private HorizontalLayoutGroup grid = null;
         [SerializeField] private GameObject characterPrefab = null;
@@ -14,6 +16,7 @@ namespace Client.UI {
         // TODO: Maybe this should be reading from the bench on UpdatePlayerInfo
         private void Start() {
             StaticManager.GameClient.UnitPurchased += HandleUnitPurchased;
+            StaticManager.GameClient.UnitSold += HandleUnitSold;
 
             benchSlots = new UIBenchSlot[10] {
                 Instantiate(characterPrefab, grid.transform).GetComponent<UIBenchSlot>(),
@@ -28,13 +31,19 @@ namespace Client.UI {
                 Instantiate(characterPrefab, grid.transform).GetComponent<UIBenchSlot>()
             };
 
-            foreach (var slot in benchSlots) {
-                slot.gameObject.SetActive(false);
+            for (int i = 0; i < benchSlots.Length; ++i) {
+                benchSlots[i].gameObject.SetActive(false);
+                benchSlots[i].SetSeat(i);
+                benchSlots[i].SeatSelected += HandleSeatSelected;
             }
         }
 
         private void OnApplicationQuit() {
             StaticManager.GameClient.UnitPurchased -= HandleUnitPurchased;
+        }
+
+        private void HandleSeatSelected(int seat) {
+            SeatSelected?.Invoke(seat, benchSlots[seat].Unit);
         }
 
         private void HandleUnitPurchased(string name) {
@@ -56,6 +65,12 @@ namespace Client.UI {
                 }
             }
             BenchFull?.Invoke(true);
+        }
+
+        private void HandleUnitSold(SellUnitFromBenchPacket packet) {
+            benchSlots[packet.Seat].gameObject.SetActive(false);
+            benchSlots[packet.Seat].Clear();
+            BenchFull?.Invoke(false);
         }
     }
 }

@@ -1,17 +1,35 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Client.UI {
     public class UIBenchSlot : MonoBehaviour {
+        public Action<int> SeatSelected;
+
         [SerializeField] private TextMeshProUGUI text = null;
         [SerializeField] private Image background = null;
 
         public bool HasUnit => text.text != "" ? true : false;
+        public string Unit => text.text;
+
+        private int seat;
 
         public void AddUnit(string name) {
             text.text = name;
             background.color = GetColorFromName(name);
+        }
+
+        public void SetSeat(int seat) {
+            this.seat = seat;
+        }
+
+        public void SelectSeat() {
+            SeatSelected?.Invoke(seat);
+        }
+
+        public void Clear() {
+            text.text = "";
         }
 
         private Color GetColorFromName(string name) {

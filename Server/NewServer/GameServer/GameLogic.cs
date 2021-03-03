@@ -143,7 +143,9 @@ namespace Server.Game {
                 packet.Seat
             );
             if (status) {
-                SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
+                // This is temporary. This will be changed when the board is added to the client
+                SendSellUnitFromBenchPacket(connection, packet);
+                //SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
             }
         }
 
@@ -184,6 +186,14 @@ namespace Server.Game {
         #endregion
 
         #region Messages
+        // This is temporary. Clients should always be updated with the playerInfoPacket.
+        // This will be changed when the board is added to the client.
+        private void SendSellUnitFromBenchPacket(NetConnection connection, SellUnitFromBenchPacket packet) {
+            NetOutgoingMessage message = server.CreateMessage();
+            packet.PacketToNetOutgoingMessage(message);
+            server.SendMessage(message, connection, NetDeliveryMethod.ReliableOrdered);
+        }
+
         private void SendTransitionPacketToAllUsers() {
             NetOutgoingMessage message = server.CreateMessage();
             new TransitionUpdatePacket() {

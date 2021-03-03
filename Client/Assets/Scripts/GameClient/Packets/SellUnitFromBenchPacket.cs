@@ -1,6 +1,6 @@
 ﻿using Lidgren.Network;
 
-namespace Server.Game {
+namespace Client.Game {
     public class SellUnitFromBenchPacket : Packet {
         public string Name { get; set; }
         public int Seat { get; set; }

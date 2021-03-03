@@ -7,6 +7,12 @@
         UpdatePlayerInfo,
         PurchaseUnit,
         PurchaseXP,
-        PurchaseReroll
+        PurchaseReroll,
+        MoveToBoardFromBench,
+        RepositionOnBoard,
+        MoveToBenchFromBoard,
+        RepositionOnBench,
+        SellUnitFromBench,
+        SellUnitFromBoard
     }
 }

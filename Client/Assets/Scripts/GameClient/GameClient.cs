@@ -11,6 +11,7 @@ namespace Client.Game {
         public Action<TransitionUpdatePacket> TransitionUpdate;
         public Action<UpdatePlayerInfoPacket> UpdatePlayerInfo;
         public Action<string> UnitPurchased;
+        public Action<SellUnitFromBenchPacket> UnitSold;
 
         public List<int> PlayerPorts;
 
@@ -64,6 +65,11 @@ namespace Client.Game {
                                 packet = new PurchaseUnitPacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 UnitPurchased?.Invoke(((PurchaseUnitPacket)packet).Name);
+                                break;
+                            case (int)PacketTypes.SellUnitFromBench:
+                                packet = new SellUnitFromBenchPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                UnitSold?.Invoke((SellUnitFromBenchPacket)packet);
                                 break;
                             default:
                                 Debug.Log("Game server received a packet");
@@ -128,6 +134,15 @@ namespace Client.Game {
         public void SendPurchaseXPRequest() {
             NetOutgoingMessage message = client.CreateMessage();
             new PurchaseXPPacket().PacketToNetOutgoingMessage(message);
+            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void SellUnit(int seat, string character) {
+            NetOutgoingMessage message = client.CreateMessage();
+            new SellUnitFromBenchPacket() {
+                Name = character,
+                Seat = seat
+            }.PacketToNetOutgoingMessage(message);
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }
     }

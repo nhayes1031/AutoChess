@@ -105,7 +105,7 @@ namespace Server.Game {
         }
 
         public bool SellUnit(Character character, int seat) {
-            if (Bench.Size < seat && Bench.List[seat] != null) {
+            if (seat < Bench.Size && Bench.List[seat] != null) {
                 Bench.List[seat] = null;
                 Gold += character.Cost;
                 return true;
