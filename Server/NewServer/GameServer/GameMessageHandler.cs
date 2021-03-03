@@ -10,6 +10,8 @@ namespace Server.Game {
         public Action<MoveToBoardFromBenchPacket, NetConnection> MoveToBoard;
         public Action<RepositionOnBoardPacket, NetConnection> RepositionOnBoard;
         public Action<RepositionOnBenchPacket, NetConnection> RepositionOnBench;
+        public Action<SellUnitFromBenchPacket, NetConnection> SellUnitFromBench;
+        public Action<SellUnitFromBoardPacket, NetConnection> SellUnitFromBoard;
 
         private NetServer server;
         private bool isAllowedToProcessMessages = false;
@@ -79,6 +81,20 @@ namespace Server.Game {
                                 packet = new RepositionOnBenchPacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 RepositionOnBench?.Invoke((RepositionOnBenchPacket)packet, message.SenderConnection);
+                                break;
+                            case ((byte)PacketTypes.SellUnitFromBench):
+                                Logger.Info(message.SenderConnection + " tried to sell a unit from their bench");
+                                packet = new SellUnitFromBenchPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                SellUnitFromBench?.Invoke((SellUnitFromBenchPacket)packet, message.SenderConnection);
+                                break;
+                            case ((byte)PacketTypes.SellUnitFromBoard):
+                                if (isAllowedToProcessMessages) {
+                                    Logger.Info(message.SenderConnection + " tried to sell a unit from their board");
+                                    packet = new SellUnitFromBoardPacket();
+                                    packet.NetIncomingMessageToPacket(message);
+                                    SellUnitFromBoard?.Invoke((SellUnitFromBoardPacket)packet, message.SenderConnection);
+                                }
                                 break;
                             default:
                                 Logger.Error("Unhandled date / packet type: " + type);

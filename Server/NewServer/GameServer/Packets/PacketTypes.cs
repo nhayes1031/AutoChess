@@ -11,7 +11,9 @@
         MoveToBoardFromBench,
         RepositionOnBoard,
         MoveToBenchFromBoard,
-        RepositionOnBench
+        RepositionOnBench,
+        SellUnitFromBench,
+        SellUnitFromBoard
     }
 }
 

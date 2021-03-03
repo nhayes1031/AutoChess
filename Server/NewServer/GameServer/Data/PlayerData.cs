@@ -95,6 +95,24 @@ namespace Server.Game {
             return false;
         }
 
+        public bool SellUnit(Character character, HexCoords coords) {
+            if (Board.Contains(character, coords)) {
+                Board.RemoveUnit(coords);
+                Gold += character.Cost;
+                return true;
+            }
+            return false;
+        }
+
+        public bool SellUnit(Character character, int seat) {
+            if (Bench.Size < seat && Bench.List[seat] != null) {
+                Bench.List[seat] = null;
+                Gold += character.Cost;
+                return true;
+            }
+            return false;
+        }
+
         public bool MoveUnit(Character character, HexCoords fromCoords, int toSeat) {
             if (Board.Contains(character, fromCoords) 
                 && Bench.Size < toSeat && Bench.List[toSeat] == null

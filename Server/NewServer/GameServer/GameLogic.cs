@@ -137,6 +137,26 @@ namespace Server.Game {
             }
         }
 
+        public void SellUnit(SellUnitFromBenchPacket packet, NetConnection connection) {
+            var status = playerDatas[connection].SellUnit(
+                CharacterFactory.CreateFromName(packet.Name),
+                packet.Seat
+            );
+            if (status) {
+                SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
+            }
+        }
+
+        public void SellUnit(SellUnitFromBoardPacket packet, NetConnection connection) {
+            var status = playerDatas[connection].SellUnit(
+                CharacterFactory.CreateFromName(packet.Name),
+                packet.Coords
+            );
+            if (status) {
+                SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
+            }
+        }
+
         #region Event Handlers
         private void HandlePlayerDatasCreated(Dictionary<NetConnection, PlayerData> playerDatas) {
             this.playerDatas = playerDatas;

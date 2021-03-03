@@ -11,6 +11,7 @@ namespace Client.UI {
 
         private UIBenchSlot[] benchSlots;
 
+        // TODO: Maybe this should be reading from the bench on UpdatePlayerInfo
         private void Start() {
             StaticManager.GameClient.UnitPurchased += HandleUnitPurchased;
 

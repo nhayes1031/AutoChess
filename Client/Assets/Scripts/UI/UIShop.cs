@@ -36,7 +36,6 @@ namespace Client.UI {
         }
 
         private void HandleSlotSelected(UIShopCharacterSlot slot) {
-            Debug.Log(canPurchase);
             if (canPurchase) {
                 StaticManager.GameClient.Purchase(slot.Name);
             }

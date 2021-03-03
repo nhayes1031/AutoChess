@@ -29,6 +29,8 @@ namespace Server.Game {
             gameMessageHandler.MoveToBench += (packet, connection) => gameLogic.MoveUnit(packet, connection);
             gameMessageHandler.RepositionOnBoard += (packet, connection) => gameLogic.MoveUnit(packet, connection);
             gameMessageHandler.RepositionOnBench += (packet, connection) => gameLogic.MoveUnit(packet, connection);
+            gameMessageHandler.SellUnitFromBench += (packet, connection) => gameLogic.SellUnit(packet, connection);
+            gameMessageHandler.SellUnitFromBoard += (packet, connection) => gameLogic.SellUnit(packet, connection);
 
             gameLogic.Lock += HandleGameLogicLocking;
         }
