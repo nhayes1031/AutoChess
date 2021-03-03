@@ -6,7 +6,7 @@ using TMPro;
 public class UIXpDisplay : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI xpText;
 
-    void Start() {
+    private void Start() {
         StaticManager.GameClient.UpdatePlayerInfo += DisplayXPLevel;
     }
 
@@ -15,7 +15,7 @@ public class UIXpDisplay : MonoBehaviour {
     }
 
     private int DisplayExperienceToLevel(int currentLevel) {
-        return currentLevel * 5; ;
+        return currentLevel * 4; ;
     }
 }
 
