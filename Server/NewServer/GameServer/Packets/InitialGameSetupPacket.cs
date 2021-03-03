@@ -15,5 +15,4 @@ namespace Server.Game {
             }
         }
     }
-
 }
