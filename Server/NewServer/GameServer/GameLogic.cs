@@ -2,6 +2,7 @@
 using Server.Game.Timeline;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Server.Game {
     public class GameLogic {
@@ -164,6 +165,7 @@ namespace Server.Game {
             this.playerDatas = playerDatas;
             state = GameState.Running;
             timeline.Start();
+            SendInitialGameSetupPacket();
         }
 
         private void HandleRoundStart() {
@@ -192,6 +194,14 @@ namespace Server.Game {
             NetOutgoingMessage message = server.CreateMessage();
             packet.PacketToNetOutgoingMessage(message);
             server.SendMessage(message, connection, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        private void SendInitialGameSetupPacket() {
+            NetOutgoingMessage message = server.CreateMessage();
+            new InitialGameSetupPacket() {
+                PlayerPorts = playerDatas.Keys.Select( x => x.RemoteEndPoint.Port )
+            }.PacketToNetOutgoingMessage(message);
+            server.SendToAll(message, NetDeliveryMethod.ReliableOrdered);
         }
 
         private void SendTransitionPacketToAllUsers() {
