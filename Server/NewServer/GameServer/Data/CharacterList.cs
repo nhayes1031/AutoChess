@@ -11,7 +11,7 @@
 
         public bool Remove(Character entry) {
             for (int i = 0; i < Size; i++) {
-                if (list[i] != null) {
+                if (!(list[i] is null)) {
                     if (list[i].Name == entry.Name) {
                         list[i] = null;
                         return true;
@@ -28,7 +28,7 @@
         public int RemoveAll(Character entry) {
             var count = 0;
             for (int i = 0; i < Size; i++) {
-                if (list[i] != null) {
+                if (!(list[i] is null)) {
                     if (list[i].Name == entry.Name) {
                         list[i] = null;
                         count++;
@@ -46,7 +46,7 @@
 
         public bool Add(Character character) {
             for (int i = 0; i < Size; i++) {
-                if (list[i] == null) {
+                if (list[i] is null) {
                     list[i] = character;
                     return true;
                 }
@@ -66,7 +66,7 @@
 
         public bool Contains(Character character) {
             for (int i = 0; i < Size; i++) {
-                if (list[i] != null) {
+                if (!(list[i] is null)) {
                     if (list[i].Name == character.Name) {
                         return true;
                     }

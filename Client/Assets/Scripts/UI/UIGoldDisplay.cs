@@ -4,7 +4,7 @@ using Client.Game;
 using TMPro;
 
 public class UIGoldDisplay : MonoBehaviour {
-    [SerializeField] private TextMeshProUGUI goldText;
+    [SerializeField] private TextMeshProUGUI goldText = null;
 
     void Start() {
         StaticManager.GameClient.UpdatePlayerInfo += DisplayPlayerGold;

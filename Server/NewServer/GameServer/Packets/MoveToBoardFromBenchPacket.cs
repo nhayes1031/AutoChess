@@ -17,6 +17,10 @@ namespace Server.Game {
 
         public override void PacketToNetOutgoingMessage(NetOutgoingMessage message) {
             message.Write((byte)PacketTypes.MoveToBoardFromBench);
+            message.Write(Character);
+            message.Write(FromSeat);
+            message.Write(ToCoords.q);
+            message.Write(ToCoords.r);
         }
     }
 }

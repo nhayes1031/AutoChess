@@ -15,7 +15,7 @@ namespace Server.Game.Timeline {
         private IEvent[] events;
         private int current;
 
-        public string CurrentEvent => events[current].GetType().ToString();
+        public IEvent CurrentEvent => events[current];
 
         public GameTimeline() {
             shopping = new Shopping();

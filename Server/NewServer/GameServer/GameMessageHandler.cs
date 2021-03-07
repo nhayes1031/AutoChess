@@ -14,7 +14,7 @@ namespace Server.Game {
         public Action<SellUnitFromBoardPacket, NetConnection> SellUnitFromBoard;
 
         private NetServer server;
-        private bool isAllowedToProcessMessages = false;
+        private bool isAllowedToProcessMessages = true;
 
         public GameMessageHandler(NetServer server) {
             this.server = server;
@@ -55,10 +55,12 @@ namespace Server.Game {
                                 UnitPurchaseRequested?.Invoke((PurchaseUnitPacket)packet, message.SenderConnection);
                                 break;
                             case ((byte)PacketTypes.MoveToBenchFromBoard):
-                                Logger.Info(message.SenderConnection + " tried to move a unit to the bench from the board");
-                                packet = new MoveToBenchFromBoardPacket();
-                                packet.NetIncomingMessageToPacket(message);
-                                MoveToBench?.Invoke((MoveToBenchFromBoardPacket)packet, message.SenderConnection);
+                                if (isAllowedToProcessMessages) {
+                                    Logger.Info(message.SenderConnection + " tried to move a unit to the bench from the board");
+                                    packet = new MoveToBenchFromBoardPacket();
+                                    packet.NetIncomingMessageToPacket(message);
+                                    MoveToBench?.Invoke((MoveToBenchFromBoardPacket)packet, message.SenderConnection);
+                                }
                                 break;
                             case ((byte)PacketTypes.MoveToBoardFromBench):
                                 if (isAllowedToProcessMessages) {
@@ -129,7 +131,7 @@ namespace Server.Game {
         }
 
         public void SetLock(bool status) {
-            isAllowedToProcessMessages = status;
+            isAllowedToProcessMessages = !status;
         }
     }
 }

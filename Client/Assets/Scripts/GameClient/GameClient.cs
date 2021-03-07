@@ -11,7 +11,9 @@ namespace Client.Game {
         public Action<TransitionUpdatePacket> TransitionUpdate;
         public Action<UpdatePlayerInfoPacket> UpdatePlayerInfo;
         public Action<string> UnitPurchased;
-        public Action<SellUnitFromBenchPacket> UnitSold;
+        public Action<SellUnitFromBenchPacket> UnitSoldFromBench;
+        public Action<SellUnitFromBoardPacket> UnitSoldFromBoard;
+        public Action<MoveToBoardFromBenchPacket> UnitMovedFromBenchToBoard;
 
         public List<int> PlayerPorts;
 
@@ -69,7 +71,17 @@ namespace Client.Game {
                             case (int)PacketTypes.SellUnitFromBench:
                                 packet = new SellUnitFromBenchPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                UnitSold?.Invoke((SellUnitFromBenchPacket)packet);
+                                UnitSoldFromBench?.Invoke((SellUnitFromBenchPacket)packet);
+                                break;
+                            case (int)PacketTypes.SellUnitFromBoard:
+                                packet = new SellUnitFromBoardPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                UnitSoldFromBoard?.Invoke((SellUnitFromBoardPacket)packet);
+                                break;
+                            case (int)PacketTypes.MoveToBoardFromBench:
+                                packet = new MoveToBoardFromBenchPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                UnitMovedFromBenchToBoard?.Invoke((MoveToBoardFromBenchPacket)packet);
                                 break;
                             default:
                                 Debug.Log("Game server received a packet");
@@ -142,6 +154,25 @@ namespace Client.Game {
             new SellUnitFromBenchPacket() {
                 Name = character,
                 Seat = seat
+            }.PacketToNetOutgoingMessage(message);
+            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void SellUnit(Hex hex) {
+            NetOutgoingMessage message = client.CreateMessage();
+            new SellUnitFromBoardPacket() {
+                Coords = hex.coords,
+                Name = hex.unit
+            }.PacketToNetOutgoingMessage(message);
+            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void MoveUnit(int seat, Hex hex, string character) {
+            NetOutgoingMessage message = client.CreateMessage();
+            new MoveToBoardFromBenchPacket() {
+                FromSeat = seat,
+                ToCoords = hex.coords,
+                Character = character
             }.PacketToNetOutgoingMessage(message);
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }

@@ -7,6 +7,9 @@ namespace Server.Game {
 
         public override void PacketToNetOutgoingMessage(NetOutgoingMessage message) {
             message.Write((byte)PacketTypes.SellUnitFromBoard);
+            message.Write(Name);
+            message.Write(Coords.q);
+            message.Write(Coords.r);
         }
 
         public override void NetIncomingMessageToPacket(NetIncomingMessage message) {

@@ -48,7 +48,7 @@ namespace Server.Game {
                 return null;
 
             var character = grid[offset.y, offset.x].unit;
-            if (character != null) {
+            if (!(character is null)) {
                 grid[offset.y, offset.x].unit = null;
             }
             return character;
@@ -59,7 +59,7 @@ namespace Server.Game {
             if (!Contains(coords))
                 return false;
 
-            if (grid[offset.y, offset.x].unit == null) {
+            if (grid[offset.y, offset.x].unit is null) {
                 return true;
             }
 

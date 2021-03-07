@@ -40,7 +40,7 @@ namespace Server.Game {
 
         public IEnumerable<string> GetShopAsStringArray() {
             return Shop.List.Select(x => {
-                if (x != null) {
+                if (!(x is null)) {
                     return x.Name;
                 }
                 return null;
@@ -49,7 +49,7 @@ namespace Server.Game {
 
         public bool Purchase(string name) {
             var character = CharacterFactory.CreateFromName(name);
-            if (character != null) {
+            if (!(character is null)) {
                 if (Shop.Contains(character)) {
                     if (Gold >= 0) {
                         Gold -= 0;
@@ -105,7 +105,7 @@ namespace Server.Game {
         }
 
         public bool SellUnit(Character character, int seat) {
-            if (seat < Bench.Size && Bench.List[seat] != null) {
+            if (seat < Bench.Size && (Bench.List[seat] is null)) {
                 Bench.List[seat] = null;
                 Gold += character.Cost;
                 return true;
@@ -115,7 +115,7 @@ namespace Server.Game {
 
         public bool MoveUnit(Character character, HexCoords fromCoords, int toSeat) {
             if (Board.Contains(character, fromCoords) 
-                && Bench.Size < toSeat && Bench.List[toSeat] == null
+                && Bench.Size < toSeat && Bench.List[toSeat] is null
             ) {
                 var unit = Board.RemoveUnit(fromCoords);
                 Bench.List[toSeat] = unit;
@@ -135,7 +135,7 @@ namespace Server.Game {
         }
 
         public bool MoveUnit(Character character, int fromSeat, HexCoords toCoords) {
-            if (Bench.List.Length < fromSeat && Bench.List[fromSeat] == character
+            if (fromSeat >= 0 && fromSeat < Bench.List.Length && Bench.List[fromSeat] == character
                 && Board.Contains(toCoords) && Board.IsHexEmpty(toCoords)
             ) {
                 var unit = Bench.List[fromSeat];
@@ -148,7 +148,7 @@ namespace Server.Game {
 
         public bool MoveUnit(Character character, int fromSeat, int toSeat) {
             if (Bench.List.Length < fromSeat && Bench.List.Length < toSeat
-                && Bench.List[fromSeat] == character && Bench.List[toSeat] == null
+                && Bench.List[fromSeat] == character && Bench.List[toSeat] is null
             ) {
                 Bench.List[toSeat] = Bench.List[fromSeat];
                 Bench.List[fromSeat] = null;

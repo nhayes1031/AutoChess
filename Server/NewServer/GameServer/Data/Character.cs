@@ -3,6 +3,14 @@
         public string Name;
         public int Cost;
         public int Level;
+
+        public static bool operator ==(Character a, Character b) => a.Equals(b);
+        public static bool operator !=(Character a, Character b) => !a.Equals(b);
+        public override bool Equals(object other) => other is Character character && Equals(character);
+        public bool Equals(Character character) => Name == character.Name;
+        public bool Equals(Character a, Character b) => a.Equals(b);
+        public override int GetHashCode() => Name.GetHashCode();
+        public override string ToString() => $"[Name:{Name},Cost:{Cost},Level:{Level}]";
     }
 
     #region Tier 1          x13

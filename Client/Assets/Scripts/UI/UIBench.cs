@@ -16,7 +16,8 @@ namespace Client.UI {
         // TODO: Maybe this should be reading from the bench on UpdatePlayerInfo
         private void Start() {
             StaticManager.GameClient.UnitPurchased += HandleUnitPurchased;
-            StaticManager.GameClient.UnitSold += HandleUnitSold;
+            StaticManager.GameClient.UnitSoldFromBench += HandleUnitSold;
+            StaticManager.GameClient.UnitMovedFromBenchToBoard += HandleUnitMoved;
 
             benchSlots = new UIBenchSlot[10] {
                 Instantiate(characterPrefab, grid.transform).GetComponent<UIBenchSlot>(),
@@ -70,6 +71,12 @@ namespace Client.UI {
         private void HandleUnitSold(SellUnitFromBenchPacket packet) {
             benchSlots[packet.Seat].gameObject.SetActive(false);
             benchSlots[packet.Seat].Clear();
+            BenchFull?.Invoke(false);
+        }
+
+        private void HandleUnitMoved(MoveToBoardFromBenchPacket packet) {
+            benchSlots[packet.FromSeat].gameObject.SetActive(false);
+            benchSlots[packet.FromSeat].Clear();
             BenchFull?.Invoke(false);
         }
     }

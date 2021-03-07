@@ -4,7 +4,7 @@ using Client.Game;
 using TMPro;
 
 public class UILevelDisplay : MonoBehaviour {
-    [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private TextMeshProUGUI levelText = null;
 
     void Start() {
         StaticManager.GameClient.UpdatePlayerInfo += DisplayPlayerLevel;
