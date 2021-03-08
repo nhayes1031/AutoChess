@@ -25,9 +25,6 @@ namespace Client.UI {
         }
 
         private void HandleUpdatePlayerInfo(UpdatePlayerInfoPacket packet) {
-            text.text += "Player Level: " + packet.Level + "\n";
-            text.text += "Player Gold: " + packet.Gold + "\n";
-            text.text += "Player XP: " + packet.XP + "\n";
             text.text += "Player Shop: ";
             for (int i = 0; i < 5; i++) {
                 text.text += "\n" + packet.Shop[i];

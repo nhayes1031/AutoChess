@@ -35,5 +35,7 @@ namespace Server.Game.Timeline {
         private void HandleTimerExpired() {
             timerElapsed = true;
         }
+
+        public override string ToString() => "Shopping";
     }
 }
