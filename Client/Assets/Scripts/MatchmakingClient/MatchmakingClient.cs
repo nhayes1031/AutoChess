@@ -6,6 +6,7 @@ namespace Client.Matchmaking {
     public class MatchmakingClient {
         public Action<bool> Connected;
         public Action<bool> Queued;
+        public Action GameFound;
 
         public NetClient client { get; set; }
 
@@ -51,6 +52,7 @@ namespace Client.Matchmaking {
                                 packet = new GameFoundPacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 ConnectToGameServer((GameFoundPacket)packet);
+                                GameFound?.Invoke();
                                 break;
                             default:
                                 break;

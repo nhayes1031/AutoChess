@@ -9,6 +9,8 @@ namespace Client {
         public string gameName = "AutoChess";
 
         private void Awake() {
+            DontDestroyOnLoad(this.gameObject);
+
             Debug.Log("Starting game manager");
             StaticManager.InitializeMatchmakingClient(port, server, gameName);
         }

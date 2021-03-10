@@ -3,19 +3,20 @@ using Client;
 using Client.Game;
 using TMPro;
 
-public class UIXpDisplay : MonoBehaviour {
-    [SerializeField] private TextMeshProUGUI xpText = null;
+namespace Client.UI {
+    public class UIXpDisplay : MonoBehaviour {
+        [SerializeField] private TextMeshProUGUI xpText = null;
 
-    private void Start() {
-        StaticManager.GameClient.UpdatePlayerInfo += DisplayXPLevel;
-    }
+        private void Start() {
+            StaticManager.GameClient.UpdatePlayerInfo += DisplayXPLevel;
+        }
 
-    private void DisplayXPLevel(UpdatePlayerInfoPacket packet) {
-        xpText.text = "XP: " + packet.XP + "/" + DisplayExperienceToLevel(packet.Level);
-    }
+        private void DisplayXPLevel(UpdatePlayerInfoPacket packet) {
+            xpText.text = "XP: " + packet.XP + "/" + DisplayExperienceToLevel(packet.Level);
+        }
 
-    private int DisplayExperienceToLevel(int currentLevel) {
-        return currentLevel * 4; ;
+        private int DisplayExperienceToLevel(int currentLevel) {
+            return currentLevel * 4; ;
+        }
     }
 }
-
