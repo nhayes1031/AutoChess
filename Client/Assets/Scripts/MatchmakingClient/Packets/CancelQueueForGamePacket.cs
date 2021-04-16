@@ -2,6 +2,7 @@
 
 namespace Client.Matchmaking {
     public class CancelQueueForGamePacket : Packet {
+        public bool Status { get; set; }
         public override void NetIncomingMessageToPacket(NetIncomingMessage message) {
         }
 

@@ -13,6 +13,13 @@
         MoveToBenchFromBoard,
         RepositionOnBench,
         SellUnitFromBench,
-        SellUnitFromBoard
+        SellUnitFromBoard,
+        SimulationUnitMoved,
+        SimulationUnitAttacked,
+        SimulationEndedInDraw,
+        SimulationEndedInVictory,
+        SimulationEndedInLoss,
+        SimulationCombatStarted,
+        SimulationUnitDied
     }
 }

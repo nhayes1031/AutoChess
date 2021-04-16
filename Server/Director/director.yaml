@@ -1,0 +1,11 @@
+﻿apiVersion: v1
+kind: Pod
+metadata:
+  name: director
+  namespace: autochess
+spec:
+  containers:
+    - name: director
+      image: gcr.io/autochess-309516/autochess-director:latest
+      imagePullPolicy: IfNotPresent
+  hostname: director

@@ -17,8 +17,11 @@ namespace Client {
         }
 
         public static void Disconnect() {
-            MatchmakingClient.SendDisconnect();
-            GameClient.SendDisconnect();
+            if (MatchmakingClient != null)
+                MatchmakingClient.SendDisconnect();
+
+            if (GameClient != null)
+                GameClient.SendDisconnect();
         }
     }
 }

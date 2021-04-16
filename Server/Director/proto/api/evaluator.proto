@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+package openmatch;
+
+option csharp_namespace = "OpenMatch";
+
+import "api/messages.proto";
+import "google/api/annotations.proto";
+
+message EvaluateRequest {
+	Match match = 1;
+}
+
+message EvaluateResponse {
+	string match_id = 2;
+	reserved 1;
+}
+
+service Evaluator {
+	rpc Evaluate (stream EvaluateRequest) returns (stream EvaluateResponse) {
+		option (google.api.http) = {
+			post: "/v1/matchfunction:run"
+			body: "*"
+		};
+	}
+}

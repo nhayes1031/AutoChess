@@ -1,0 +1,39 @@
+﻿syntax = "proto3";
+package openmatch;
+
+option csharp_namespace = "OpenMatch";
+
+import "api/messages.proto";
+import "google/api/annotations.proto";
+
+message QueryTicketsRequest {
+	Pool pool = 1;
+}
+
+message QueryTicketsResponse {
+	repeated Ticket tickets = 1;
+}
+
+message QueryTicketsIdsRequest {
+	Pool pool = 1;
+}
+
+message QueryTicketIdsResponse {
+	repeated string ids = 1;
+}
+
+service QueryService {
+	rpc QueryTickets (QueryTicketsRequest) returns (stream QueryTicketsResponse) {
+		option (google.api.http) = {
+			post: "/v1/queryservice/tickets:query"
+			body: "*"
+		};
+	}
+
+	rpc QueryTicketIds (QueryTicketsIdsRequest) returns (stream QueryTicketIdsResponse) {
+		option (google.api.http) = {
+			post: "/v1/queryservice/ticketids:query"
+			body: "*"
+		};
+	}
+}

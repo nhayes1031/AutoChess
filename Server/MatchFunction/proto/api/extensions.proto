@@ -1,0 +1,8 @@
+﻿syntax = "proto3";
+package openmatch;
+
+option csharp_namespace = "OpenMatch";
+
+message DefaultEvaluationCriteria {
+	double score = 1;
+}

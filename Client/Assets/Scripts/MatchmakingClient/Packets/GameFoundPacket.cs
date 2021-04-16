@@ -2,15 +2,13 @@
 
 namespace Client.Matchmaking {
     public class GameFoundPacket : Packet {
-        public int Port { get; set; }
+        public string Endpoint { get; set; }
         public override void NetIncomingMessageToPacket(NetIncomingMessage message) {
-            Port = message.ReadInt32();
+            Endpoint = message.ReadString();
         }
 
         public override void PacketToNetOutgoingMessage(NetOutgoingMessage message) {
             message.Write((byte)PacketTypes.GameFound);
-            message.Write(Port);
         }
-
     }
 }

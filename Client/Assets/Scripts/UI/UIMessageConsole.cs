@@ -10,6 +10,7 @@ namespace Client.UI {
             StaticManager.GameClient.TransitionUpdate += HandleTransitionUpdate;
             StaticManager.GameClient.UpdatePlayerInfo += HandleUpdatePlayerInfo;
             StaticManager.GameClient.UnitPurchased += HandleUnitPurchased;
+            StaticManager.GameClient.SimulationUnitMoved += HandleSimulationUnitMoved;
 
             text.text = "";
         }
@@ -18,6 +19,7 @@ namespace Client.UI {
             StaticManager.GameClient.TransitionUpdate -= HandleTransitionUpdate;
             StaticManager.GameClient.UpdatePlayerInfo -= HandleUpdatePlayerInfo;
             StaticManager.GameClient.UnitPurchased -= HandleUnitPurchased;
+            StaticManager.GameClient.SimulationUnitMoved -= HandleSimulationUnitMoved;
         }
 
         private void HandleTransitionUpdate(TransitionUpdatePacket packet) {
@@ -34,6 +36,10 @@ namespace Client.UI {
 
         private void HandleUnitPurchased(string name) {
             text.text += "Unit Purchased: " + name + "\n";
+        }
+
+        private void HandleSimulationUnitMoved(SimulationUnitMovedPacket packet) {
+            text.text += $"Unit moved from {packet.FromCoords} to {packet.ToCoords}\n";
         }
     }
 }

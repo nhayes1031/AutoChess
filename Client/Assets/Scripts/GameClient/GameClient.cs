@@ -14,10 +14,19 @@ namespace Client.Game {
         public Action<SellUnitFromBenchPacket> UnitSoldFromBench;
         public Action<SellUnitFromBoardPacket> UnitSoldFromBoard;
         public Action<MoveToBoardFromBenchPacket> UnitMovedFromBenchToBoard;
+        public Action<SimulationUnitMovedPacket> SimulationUnitMoved;
+        public Action<SimulationUnitAttackedPacket> SimulationUnitAttacked;
+        public Action<SimulationCombatStartedPacket> SimulationCombatStarted;
+        public Action SimulationEndedInDraw;
+        public Action SimulationEndedInVictory;
+        public Action SimulationEndedInLoss;
+        public Action<SimulationUnitDiedPacket> SimulationUnitDied;
 
         public List<int> PlayerPorts;
+        public Guid PlayerId => playerId;
 
         private NetClient client { get; set; }
+        private Guid playerId;
 
         public GameClient() {
             PlayerPorts = new List<int>();
@@ -82,6 +91,40 @@ namespace Client.Game {
                                 packet = new MoveToBoardFromBenchPacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 UnitMovedFromBenchToBoard?.Invoke((MoveToBoardFromBenchPacket)packet);
+                                break;
+                            case (int)PacketTypes.SimulationUnitMoved:
+                                packet = new SimulationUnitMovedPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                SimulationUnitMoved?.Invoke((SimulationUnitMovedPacket)packet);
+                                break;
+                            case (int)PacketTypes.SimulationUnitAttacked:
+                                packet = new SimulationUnitAttackedPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                SimulationUnitAttacked?.Invoke((SimulationUnitAttackedPacket)packet);
+                                break;
+                            case (int)PacketTypes.SimulationCombatStarted:
+                                packet = new SimulationCombatStartedPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                SimulationCombatStarted?.Invoke((SimulationCombatStartedPacket)packet);
+                                break;
+                            case (int)PacketTypes.SimulationEndedInVictory:
+                                SimulationEndedInVictory?.Invoke();
+                                break;
+                            case (int)PacketTypes.SimulationEndedInLoss:
+                                SimulationEndedInLoss?.Invoke();
+                                break;
+                            case (int)PacketTypes.SimulationEndedInDraw:
+                                SimulationEndedInDraw?.Invoke();
+                                break;
+                            case (int)PacketTypes.SimulationUnitDied:
+                                packet = new SimulationUnitDiedPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                SimulationUnitDied?.Invoke((SimulationUnitDiedPacket)packet);
+                                break;
+                            case (int)PacketTypes.Connect:
+                                packet = new ConnectPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                playerId = ((ConnectPacket)packet).playerId;
                                 break;
                             default:
                                 Debug.Log("Game server received a packet");

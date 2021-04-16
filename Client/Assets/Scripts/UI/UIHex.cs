@@ -14,6 +14,7 @@ namespace Client.UI {
 
         private Hex hex;
 
+        public string Unit => hex.unit;
         public HexCoords Coords => hex.coords;
 
         public void Initialize(HexCoords coords) {
@@ -40,9 +41,11 @@ namespace Client.UI {
             hex.unit = character;
         }
 
-        public void RemoveUnit() {
+        public string RemoveUnit() {
             characterSquare.gameObject.SetActive(false);
+            var temp = hex.unit;
             hex.unit = "";
+            return temp;
         }
 
         private Color GetColorFromName(string name) {

@@ -1,0 +1,35 @@
+﻿apiVersion: v1
+kind: Pod
+metadata:
+  name: matchfunction
+  namespace: autochess
+  labels:
+    app: autochess
+    component: matchfunction
+spec:
+  containers:
+  - name: matchfunction
+    image: gcr.io/autochess-309516/autochess-matchfunction:latest
+    imagePullPolicy: IfNotPresent
+    ports:
+      - name: grpc
+        containerPort: 50502
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: matchfunction
+  namespace: autochess
+  labels:
+    app: autochess
+    component: matchfunction
+spec:
+  selector:
+    app: autochess
+    component: matchfunction
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: 50502

@@ -1,0 +1,36 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: udp-services
+  namespace: ingress-nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend
+  namespace: autochess
+spec:
+  containers:
+    - name: frontend
+      image: autochess-frontend:latest
+      imagePullPolicy: IfNotPresent
+      ports:
+        - name: grpc
+          containerPort: 50504
+  hostname: frontend
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: frontend
+  namespace: autochess
+  labels:
+    app: autochess
+spec:
+  type: ClusterIP
+  selector:
+    app: autochess
+  ports:
+    - name: http
+      protocol: UDP
+      port: 34560

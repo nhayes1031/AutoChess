@@ -1,0 +1,18 @@
+﻿apiVersion: "agones.dev/v1"
+kind: GameServer
+metadata:
+  name: autochess
+spec:
+  ports:
+  - name: default
+    portPolicy: Dynamic
+    containerPort: 5000
+    protocol: UDP
+  sdkServer:
+    logLevel: Info
+  template:
+    spec:
+      containers:
+      - name: autochess
+        image: mcr.microsoft.com/dotnet:5.0
+        imagePullPolicy: Always # add for development

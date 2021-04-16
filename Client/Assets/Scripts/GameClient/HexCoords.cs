@@ -1,4 +1,6 @@
-﻿namespace Client.Game {
+﻿using UnityEngine;
+
+namespace Client.Game {
     /// <summary>
     /// Axial based tile coordinates
     /// </summary>
@@ -29,10 +31,16 @@
             return this + Direction(direction);
         }
 
-        public OffsetCoords ToOffset() {
-            var x = q + (r - (r&1)) / 2;
-            var y = r;
-            return new OffsetCoords(x, y);
+        public OffsetCoords ToOffset(bool flip = false) {
+            if (flip) {
+                var x = 7 - (q + (r - (r & 1)) / 2);
+                var y = 7 - r;
+                return new OffsetCoords(x, y);
+            } else {
+                var x = q + (r - (r & 1)) / 2;
+                var y = r;
+                return new OffsetCoords(x, y);
+            }
         }
 
         public static bool operator == (HexCoords a, HexCoords b) => a.Equals(b);

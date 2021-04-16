@@ -11,7 +11,7 @@ namespace Client.Matchmaking {
         public NetClient client { get; set; }
 
         public MatchmakingClient(int port, string server, string serverName) {
-            var config = new NetPeerConfiguration(serverName);
+            var config = new NetPeerConfiguration("Autochess_frontend");
 
             client = new NetClient(config);
             client.RegisterReceivedCallback(new System.Threading.SendOrPostCallback(ReceiveMessage));
@@ -20,7 +20,7 @@ namespace Client.Matchmaking {
             NetOutgoingMessage message = client.CreateMessage();
             new ConnectPacket().PacketToNetOutgoingMessage(message);
 
-            client.Connect(server, port, message);
+            client.Connect("127.0.0.1", 34560, message);
         }
 
         public void ReceiveMessage(object peer) {
@@ -51,8 +51,8 @@ namespace Client.Matchmaking {
                             case (int)PacketTypes.GameFound:
                                 packet = new GameFoundPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                ConnectToGameServer((GameFoundPacket)packet);
-                                GameFound?.Invoke();
+                                Debug.Log(((GameFoundPacket)packet).Endpoint);
+                                // ConnectToGameServer((GameFoundPacket)packet);
                                 break;
                             default:
                                 break;
@@ -91,8 +91,8 @@ namespace Client.Matchmaking {
         }
 
         public void ConnectToGameServer(GameFoundPacket packet) {
-            Debug.Log("Trying to connect to game server on port " + packet.Port);
-            StaticManager.InitializeGameClient(packet.Port, "127.0.0.1", "AutoChess Game");
+            Debug.Log("Trying to connect to game server at " + packet.Endpoint);
+            // StaticManager.InitializeGameClient(packet.Port, "127.0.0.1", "AutoChess Game");
         }
 
         public void SendMatchmakingRequest() {
