@@ -7,15 +7,15 @@ namespace Client.UI {
 
         private void Start() {
             text.text = "Connecting";
-            StaticManager.MatchmakingClient.Connected += HandleConnection;
+            Manager.MatchmakingClient.Connected += HandleConnection;
         }
 
-        private void OnApplicationQuit() {
-            StaticManager.MatchmakingClient.Connected -= HandleConnection;
+        private void OnDestroy() {
+            Manager.MatchmakingClient.Connected -= HandleConnection;
         }
 
         private void HandleConnection(bool connectionStatus) {
-            text.text = "Connected: " + connectionStatus.ToString();
+            text.text = "Connected: " + connectionStatus;
         }
     }
 }

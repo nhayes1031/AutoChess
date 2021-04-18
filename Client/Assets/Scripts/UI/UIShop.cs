@@ -3,15 +3,15 @@ using UnityEngine.UI;
 
 namespace Client.UI {
     public class UIShop : MonoBehaviour {
-        [SerializeField] private HorizontalLayoutGroup grid = null;
-        [SerializeField] private GameObject characterPrefab = null;
+        [SerializeField] private  HorizontalLayoutGroup grid = null;
+        [SerializeField] private  GameObject characterPrefab = null;
 
         private UIShopCharacterSlot[] characterSlots;
         private bool canPurchase = true;
 
         private void Start() {
-            StaticManager.GameClient.ShopUpdate += HandleShopUpdate;
-            StaticManager.GameClient.UnitPurchased += HandleUnitPurchased;
+            Manager.GameClient.ShopUpdate += HandleShopUpdate;
+            Manager.GameClient.UnitPurchased += HandleUnitPurchased;
 
             FindObjectOfType<UIBench>().BenchFull += HandleFullBench;
 
@@ -29,15 +29,15 @@ namespace Client.UI {
         }
 
         private void OnApplicationQuit() {
-            StaticManager.GameClient.ShopUpdate -= HandleShopUpdate;
-            StaticManager.GameClient.UnitPurchased -= HandleUnitPurchased;
+            Manager.GameClient.ShopUpdate -= HandleShopUpdate;
+            Manager.GameClient.UnitPurchased -= HandleUnitPurchased;
 
             FindObjectOfType<UIBench>().BenchFull -= HandleFullBench;
         }
 
         private void HandleSlotSelected(UIShopCharacterSlot slot) {
             if (canPurchase) {
-                StaticManager.GameClient.Purchase(slot.Name);
+                Manager.GameClient.Purchase(slot.Name);
             }
         }
 

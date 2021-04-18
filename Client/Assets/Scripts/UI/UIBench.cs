@@ -8,16 +8,16 @@ namespace Client.UI {
         public Action<bool> BenchFull;
         public Action<int, string> SeatSelected;
 
-        [SerializeField] private HorizontalLayoutGroup grid = null;
-        [SerializeField] private GameObject characterPrefab = null;
+        [SerializeField] private  HorizontalLayoutGroup grid = null;
+        [SerializeField] private  GameObject characterPrefab = null;
 
         private UIBenchSlot[] benchSlots;
 
         // TODO: Maybe this should be reading from the bench on UpdatePlayerInfo
         private void Start() {
-            StaticManager.GameClient.UnitPurchased += HandleUnitPurchased;
-            StaticManager.GameClient.UnitSoldFromBench += HandleUnitSold;
-            StaticManager.GameClient.UnitMovedFromBenchToBoard += HandleUnitMoved;
+            Manager.GameClient.UnitPurchased += HandleUnitPurchased;
+            Manager.GameClient.UnitSoldFromBench += HandleUnitSold;
+            Manager.GameClient.UnitMovedFromBenchToBoard += HandleUnitMoved;
 
             benchSlots = new UIBenchSlot[10] {
                 Instantiate(characterPrefab, grid.transform).GetComponent<UIBenchSlot>(),
@@ -40,7 +40,9 @@ namespace Client.UI {
         }
 
         private void OnApplicationQuit() {
-            StaticManager.GameClient.UnitPurchased -= HandleUnitPurchased;
+            Manager.GameClient.UnitPurchased -= HandleUnitPurchased;
+            Manager.GameClient.UnitSoldFromBench -= HandleUnitSold;
+            Manager.GameClient.UnitMovedFromBenchToBoard -= HandleUnitMoved;
         }
 
         private void HandleSeatSelected(int seat) {

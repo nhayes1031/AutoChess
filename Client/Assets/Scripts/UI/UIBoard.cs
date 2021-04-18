@@ -9,15 +9,15 @@ namespace Client.UI {
 
         public Action<Hex> HexSelected;
 
-        [SerializeField] private GameObject hexPrefab = null;
-        [SerializeField] private GameObject attackPrefab = null;
-        [SerializeField] private GameObject movePrefab = null;
+        [SerializeField] private  GameObject hexPrefab = null;
+        [SerializeField] private  GameObject attackPrefab = null;
+        [SerializeField] private  GameObject movePrefab = null;
 
         private UIHex[,] grid;
         private string[,] snapshot;
         private bool flipCoords;
 
-        public void Start() {
+        private void Start() {
             grid = new UIHex[HEIGHT, WIDTH];
             snapshot = new string[HEIGHT, WIDTH];
 
@@ -32,15 +32,27 @@ namespace Client.UI {
                 }
             }
 
-            StaticManager.GameClient.UnitSoldFromBoard += HandleUnitSold;
-            StaticManager.GameClient.UnitMovedFromBenchToBoard += HandleUnitMoved;
-            StaticManager.GameClient.SimulationUnitMoved += HandleSimulationUnitMoved;
-            StaticManager.GameClient.SimulationUnitAttacked += HandleSimulationUnitAttacked;
-            StaticManager.GameClient.SimulationCombatStarted += HandleSimulationCombatStarted;
-            StaticManager.GameClient.SimulationEndedInDraw += ResetBoard;
-            StaticManager.GameClient.SimulationEndedInVictory += ResetBoard;
-            StaticManager.GameClient.SimulationEndedInLoss += ResetBoard;
-            StaticManager.GameClient.SimulationUnitDied += HandleSimulationUnitDied;
+            Manager.GameClient.UnitSoldFromBoard += HandleUnitSold;
+            Manager.GameClient.UnitMovedFromBenchToBoard += HandleUnitMoved;
+            Manager.GameClient.SimulationUnitMoved += HandleSimulationUnitMoved;
+            Manager.GameClient.SimulationUnitAttacked += HandleSimulationUnitAttacked;
+            Manager.GameClient.SimulationCombatStarted += HandleSimulationCombatStarted;
+            Manager.GameClient.SimulationEndedInDraw += ResetBoard;
+            Manager.GameClient.SimulationEndedInVictory += ResetBoard;
+            Manager.GameClient.SimulationEndedInLoss += ResetBoard;
+            Manager.GameClient.SimulationUnitDied += HandleSimulationUnitDied;
+        }
+
+        private void OnDestroy() {
+            Manager.GameClient.UnitSoldFromBoard -= HandleUnitSold;
+            Manager.GameClient.UnitMovedFromBenchToBoard -= HandleUnitMoved;
+            Manager.GameClient.SimulationUnitMoved -= HandleSimulationUnitMoved;
+            Manager.GameClient.SimulationUnitAttacked -= HandleSimulationUnitAttacked;
+            Manager.GameClient.SimulationCombatStarted -= HandleSimulationCombatStarted;
+            Manager.GameClient.SimulationEndedInDraw -= ResetBoard;
+            Manager.GameClient.SimulationEndedInVictory -= ResetBoard;
+            Manager.GameClient.SimulationEndedInLoss -= ResetBoard;
+            Manager.GameClient.SimulationUnitDied -= HandleSimulationUnitDied;
         }
 
         private void HandleSimulationUnitDied(SimulationUnitDiedPacket packet) {
@@ -93,7 +105,7 @@ namespace Client.UI {
             ClearBoard();
 
             Debug.Log(packet.bottomPlayer);
-            if (packet.bottomPlayer == StaticManager.GameClient.PlayerId) {
+            if (packet.bottomPlayer == Manager.GameClient.PlayerId) {
                 flipCoords = false;
             } else {
                 flipCoords = true;

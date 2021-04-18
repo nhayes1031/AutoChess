@@ -2,24 +2,27 @@
 
 namespace Client.UI {
     public class UIReconnect : MonoBehaviour {
+        [SerializeField] private GameObject button = null;
+
         private void Start() {
-            StaticManager.MatchmakingClient.Connected += HandleConnection;
+            Manager.MatchmakingClient.Connected += HandleConnection;
         }
 
-        private void OnApplicationQuit() {
-            StaticManager.MatchmakingClient.Connected -= HandleConnection;
+        private void OnDestroy() {
+            Manager.MatchmakingClient.Connected -= HandleConnection;
         }
 
         private void HandleConnection(bool connectionStatus) {
-            if (connectionStatus)
-                gameObject.SetActive(false);
-            else
-                gameObject.SetActive(true);
+            if (connectionStatus) {
+                button.SetActive(false);
+            } else {
+                button.SetActive(true);
+            }
         }
 
         public void Reconnect() {
-            StaticManager.MatchmakingClient.Reconnect();
-            gameObject.SetActive(false);
+            Manager.Reconnect();
+            button.SetActive(false);
         }
     }
 }

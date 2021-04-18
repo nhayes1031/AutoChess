@@ -1,14 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace Client {
-
     public class DataStore : MonoSingleton<DataStore> {
-        private void Awake() {
-            DontDestroyOnLoad(gameObject);
-        }
-
         public List<int> playerPorts;
+
+        private void Awake() {
+            DontDestroyOnLoad(this);
+        }
     }
 }

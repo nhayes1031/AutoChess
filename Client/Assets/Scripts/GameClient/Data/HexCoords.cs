@@ -5,7 +5,7 @@ namespace Client.Game {
     /// Axial based tile coordinates
     /// </summary>
     public struct HexCoords {
-        private static readonly HexCoords[] directions = new HexCoords[] {
+        private static  HexCoords[] directions = new HexCoords[] {
             new HexCoords(1, -1),
             new HexCoords(1, 0),
             new HexCoords(0, 1),
@@ -15,8 +15,8 @@ namespace Client.Game {
         };
         public static HexCoords Zero => new HexCoords(0, 0);
 
-        public readonly int q;
-        public readonly int r;
+        public  int q;
+        public  int r;
 
         public HexCoords(int q, int r) {
             this.q = q;

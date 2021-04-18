@@ -1,6 +1,7 @@
 ﻿using Lidgren.Network;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace Client.Game {
@@ -26,23 +27,29 @@ namespace Client.Game {
         public Guid PlayerId => playerId;
 
         private NetClient client { get; set; }
+
         private Guid playerId;
 
         public GameClient() {
             PlayerPorts = new List<int>();
         }
 
-        public void Init(int port, string server, string serverName) {
+        public void Initialize(int port, string server, string serverName) {
+            try {
+
             var config = new NetPeerConfiguration(serverName);
 
             client = new NetClient(config);
-            client.RegisterReceivedCallback(new System.Threading.SendOrPostCallback(ReceiveMessage));
+            client.RegisterReceivedCallback(new SendOrPostCallback(ReceiveMessage));
             client.Start();
 
             NetOutgoingMessage message = client.CreateMessage();
             new ConnectPacket().PacketToNetOutgoingMessage(message);
 
             client.Connect(server, port, message);
+            } catch (Exception e) {
+                Debug.Log(e);
+            }
         }
 
         public void ReceiveMessage(object peer) {
@@ -163,13 +170,19 @@ namespace Client.Game {
             }
         }
 
-        public void SendDisconnect() {
-            NetOutgoingMessage message = client.CreateMessage();
-            new DisconnectPacket().PacketToNetOutgoingMessage(message);
-            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
-            client.FlushSendQueue();
+        public void Disconnect() {
+            SendDisconnect();
+        }
 
-            client.Disconnect("Bye!");
+        private void SendDisconnect() {
+            if (client != null) {
+                NetOutgoingMessage message = client.CreateMessage();
+                new DisconnectPacket().PacketToNetOutgoingMessage(message);
+                client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+                client.FlushSendQueue();
+
+                client.Disconnect("Bye!");
+            }
         }
 
         public void SendRerollRequest() {

@@ -1,18 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 
 namespace Client.UI {
     public class UILoadingStatus : MonoBehaviour {
         [SerializeField] private TextMeshProUGUI loadStatus = null;
 
-        void Start() {
-            StaticManager.GameClient.Connected += DisplayLoadingStatus;
+        private void Start() {
+            Manager.GameClient.Connected += DisplayLoadingStatus;
         }
 
-        private void OnApplicationQuit() {
-            StaticManager.GameClient.Connected -= DisplayLoadingStatus;
+        private void OnDestroy() {
+            Manager.GameClient.Connected -= DisplayLoadingStatus;
         }
 
         private void DisplayLoadingStatus(bool status) {

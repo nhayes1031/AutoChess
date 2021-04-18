@@ -4,25 +4,25 @@ using UnityEngine.UI;
 
 namespace Client.UI {
     public class UIFindMatch : MonoBehaviour {
-        [SerializeField] private Button button = null;
-        [SerializeField] private TextMeshProUGUI text = null;
+        [SerializeField] private  Button button = null;
+        [SerializeField] private  TextMeshProUGUI text = null;
         private bool isQueued;
 
         private void Start() {
-            StaticManager.MatchmakingClient.Queued += HandleQueued;
-            StaticManager.GameClient.Connected += HandleGameClientConnected;
+            Manager.MatchmakingClient.Queued += HandleQueued;
+            Manager.GameClient.Connected += HandleGameClientConnected;
         }
 
-        private void OnApplicationQuit() {
-            StaticManager.MatchmakingClient.Queued -= HandleQueued;
-            StaticManager.GameClient.Connected -= HandleGameClientConnected;
+        private void OnDestroy() {
+            Manager.MatchmakingClient.Queued -= HandleQueued;
+            Manager.GameClient.Connected -= HandleGameClientConnected;
         }
 
         public void FindMatch() {
             if (isQueued) {
-                StaticManager.MatchmakingClient.CancelMatchmakingRequest();
+                Manager.MatchmakingClient.CancelMatchmakingRequest();
             } else {
-                StaticManager.MatchmakingClient.SendMatchmakingRequest();
+                Manager.MatchmakingClient.SendMatchmakingRequest();
             }
         }
 
@@ -37,10 +37,6 @@ namespace Client.UI {
 
         private void HandleQueued(bool queued) {
             isQueued = queued;
-            UpdateDisplay();
-        }
-
-        private void UpdateDisplay() {
             if (isQueued) {
                 text.text = "Cancel";
             } else {

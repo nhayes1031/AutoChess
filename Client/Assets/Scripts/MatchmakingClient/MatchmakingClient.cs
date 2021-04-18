@@ -3,30 +3,34 @@ using System;
 using UnityEngine;
 
 namespace Client.Matchmaking {
-    public class MatchmakingClient {
-        public Action<bool> Connected;
-        public Action<bool> Queued;
-        public Action GameFound;
+    public class MatchmakingClient : IMatchmakingClient {
+        public Action<bool> Connected { get; set; }
+        public Action<bool> Queued { get; set; }
+        public Action GameFound { get; set; }
 
-        public NetClient client { get; set; }
+        public NetClient Client { get; set; }
 
         public MatchmakingClient(int port, string server, string serverName) {
+            Connect(port, server, serverName);
+        }
+
+        private void Connect(int port, string server, string serverName) {
             var config = new NetPeerConfiguration("Autochess_frontend");
 
-            client = new NetClient(config);
-            client.RegisterReceivedCallback(new System.Threading.SendOrPostCallback(ReceiveMessage));
-            client.Start();
+            Client = new NetClient(config);
+            Client.RegisterReceivedCallback(new System.Threading.SendOrPostCallback(ReceiveMessage));
+            Client.Start();
 
-            NetOutgoingMessage message = client.CreateMessage();
+            NetOutgoingMessage message = Client.CreateMessage();
             new ConnectPacket().PacketToNetOutgoingMessage(message);
 
-            client.Connect("127.0.0.1", 34560, message);
+            Client.Connect("127.0.0.1", 34560, message);
         }
 
         public void ReceiveMessage(object peer) {
             NetIncomingMessage message;
 
-            while ((message = client.ReadMessage()) != null) {
+            while ((message = Client.ReadMessage()) != null) {
                 switch (message.MessageType) {
                     case NetIncomingMessageType.Data:
                         var packetType = (int)message.ReadByte();
@@ -51,8 +55,7 @@ namespace Client.Matchmaking {
                             case (int)PacketTypes.GameFound:
                                 packet = new GameFoundPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                Debug.Log(((GameFoundPacket)packet).Endpoint);
-                                // ConnectToGameServer((GameFoundPacket)packet);
+                                ConnectToGameServer((GameFoundPacket)packet);
                                 break;
                             default:
                                 break;
@@ -86,47 +89,38 @@ namespace Client.Matchmaking {
                         Debug.Log("Unhandled type: " + message.MessageType + " " + message.LengthBytes + "bytes");
                         break;
                 }
-                client.Recycle(message);
+                Client.Recycle(message);
             }
         }
 
         public void ConnectToGameServer(GameFoundPacket packet) {
             Debug.Log("Trying to connect to game server at " + packet.Endpoint);
-            // StaticManager.InitializeGameClient(packet.Port, "127.0.0.1", "AutoChess Game");
+            // Manager.InitializeGameClient(packet.Port, "127.0.0.1", "AutoChess Game");
         }
 
         public void SendMatchmakingRequest() {
-            NetOutgoingMessage message = client.CreateMessage();
+            NetOutgoingMessage message = Client.CreateMessage();
             new QueueForGamePacket().PacketToNetOutgoingMessage(message);
-            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+            Client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }
 
         public void CancelMatchmakingRequest() {
-            NetOutgoingMessage message = client.CreateMessage();
+            NetOutgoingMessage message = Client.CreateMessage();
             new CancelQueueForGamePacket().PacketToNetOutgoingMessage(message);
-            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+            Client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }
 
-        public void SendDisconnect() {
-            NetOutgoingMessage message = client.CreateMessage();
+        public void Disconnect() {
+            SendDisconnect();
+        }
+
+        private void SendDisconnect() {
+            NetOutgoingMessage message = Client.CreateMessage();
             new DisconnectPacket().PacketToNetOutgoingMessage(message);
-            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
-            client.FlushSendQueue();
+            Client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+            Client.FlushSendQueue();
 
-            client.Disconnect("Bye!");
-        }
-
-        public void Reconnect() {
-            var config = new NetPeerConfiguration("AutoChess");
-
-            client = new NetClient(config);
-            client.RegisterReceivedCallback(new System.Threading.SendOrPostCallback(ReceiveMessage));
-            client.Start();
-
-            NetOutgoingMessage message = client.CreateMessage();
-            new ConnectPacket().PacketToNetOutgoingMessage(message);
-
-            client.Connect("127.0.0.1", 34560, message);
+            Client.Disconnect("Bye!");
         }
     }
 }

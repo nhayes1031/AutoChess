@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Client.UI {
     public class UICurrentSelectionText : MonoBehaviour {
-        [SerializeField] private TextMeshProUGUI text = null;
+        [SerializeField] private  TextMeshProUGUI text = null;
 
         private int? seat = null;
         private Hex hex = null;
@@ -13,9 +13,9 @@ namespace Client.UI {
             FindObjectOfType<UIBench>().SeatSelected += HandleSeatSelected;
             FindObjectOfType<UIBoard>().HexSelected += HandleHexSelected;
 
-            StaticManager.GameClient.UnitSoldFromBench += HandleUnitSold;
-            StaticManager.GameClient.UnitSoldFromBoard += HandleUnitSold;
-            StaticManager.GameClient.UnitMovedFromBenchToBoard += HandleUnitMovedFromBenchToBoard;
+            Manager.GameClient.UnitSoldFromBench += HandleUnitSold;
+            Manager.GameClient.UnitSoldFromBoard += HandleUnitSold;
+            Manager.GameClient.UnitMovedFromBenchToBoard += HandleUnitMovedFromBenchToBoard;
         }
 
         private void HandleSeatSelected(int seat, string character) {
@@ -30,15 +30,15 @@ namespace Client.UI {
                 this.hex = hex;
             }
             if (seat.HasValue && hex.unit == "") {
-                StaticManager.GameClient.MoveUnit(seat.GetValueOrDefault(), hex, text.text);
+                Manager.GameClient.MoveUnit(seat.GetValueOrDefault(), hex, text.text);
             }
         }
 
         public void SellCurrentSelection() {
             if (!(seat is null)) {
-                StaticManager.GameClient.SellUnit(seat.GetValueOrDefault(), text.text);
+                Manager.GameClient.SellUnit(seat.GetValueOrDefault(), text.text);
             } else if (!(hex is null)) {
-                StaticManager.GameClient.SellUnit(hex);
+                Manager.GameClient.SellUnit(hex);
             }
         }
 

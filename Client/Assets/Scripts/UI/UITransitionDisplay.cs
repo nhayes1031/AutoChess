@@ -4,11 +4,11 @@ using Client.Game;
 using TMPro;
 
 public class UITransitionDisplay : MonoBehaviour {
-    [SerializeField] private TextMeshProUGUI transitionText = null;
+    [SerializeField] private  TextMeshProUGUI transitionText = null;
 
     private void Start() {
-        StaticManager.GameClient.TransitionUpdate += DisplayTransitionUpdate;
-        StaticManager.GameClient.TransitionUpdate += ReadTransitionPacket;
+        Manager.GameClient.TransitionUpdate += DisplayTransitionUpdate;
+        Manager.GameClient.TransitionUpdate += ReadTransitionPacket;
     }
 
     private void DisplayTransitionUpdate(TransitionUpdatePacket packet) {

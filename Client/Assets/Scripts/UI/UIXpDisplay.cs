@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
-using Client;
 using Client.Game;
 using TMPro;
 
 namespace Client.UI {
     public class UIXpDisplay : MonoBehaviour {
-        [SerializeField] private TextMeshProUGUI xpText = null;
+        [SerializeField] private  TextMeshProUGUI xpText = null;
 
         private void Start() {
-            StaticManager.GameClient.UpdatePlayerInfo += DisplayXPLevel;
+            Manager.GameClient.UpdatePlayerInfo += DisplayXPLevel;
         }
 
         private void DisplayXPLevel(UpdatePlayerInfoPacket packet) {

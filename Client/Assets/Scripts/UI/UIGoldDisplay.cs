@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
-using Client;
 using Client.Game;
 using TMPro;
 
 namespace Client.UI {
     public class UIGoldDisplay : MonoBehaviour {
-        [SerializeField] private TextMeshProUGUI goldText = null;
+        [SerializeField] private  TextMeshProUGUI goldText = null;
 
-        void Start() {
-            StaticManager.GameClient.UpdatePlayerInfo += DisplayPlayerGold;
+        private void Start() {
+            Manager.GameClient.UpdatePlayerInfo += DisplayPlayerGold;
+        }
+
+        private void OnDestory() {
+            Manager.GameClient.UpdatePlayerInfo -= DisplayPlayerGold;
         }
 
         private void DisplayPlayerGold(UpdatePlayerInfoPacket packet) {

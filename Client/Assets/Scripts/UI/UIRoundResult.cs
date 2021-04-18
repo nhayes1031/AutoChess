@@ -4,20 +4,20 @@ using UnityEngine;
 
 namespace Client.UI {
     public class UIRoundResult : MonoBehaviour {
-        [SerializeField] private TextMeshProUGUI textField = null;
+        [SerializeField] private  TextMeshProUGUI textField = null;
 
         private void Start() {
             textField.gameObject.SetActive(false);
 
-            StaticManager.GameClient.SimulationEndedInVictory += HandleVictory;
-            StaticManager.GameClient.SimulationEndedInLoss += HandleLoss;
-            StaticManager.GameClient.SimulationEndedInDraw += HandleDraw;
+            Manager.GameClient.SimulationEndedInVictory += HandleVictory;
+            Manager.GameClient.SimulationEndedInLoss += HandleLoss;
+            Manager.GameClient.SimulationEndedInDraw += HandleDraw;
         }
 
         private void OnDestroy() {
-            StaticManager.GameClient.SimulationEndedInVictory -= HandleVictory;
-            StaticManager.GameClient.SimulationEndedInLoss -= HandleLoss;
-            StaticManager.GameClient.SimulationEndedInDraw -= HandleDraw;
+            Manager.GameClient.SimulationEndedInVictory -= HandleVictory;
+            Manager.GameClient.SimulationEndedInLoss -= HandleLoss;
+            Manager.GameClient.SimulationEndedInDraw -= HandleDraw;
         }
 
         private void HandleVictory() {
