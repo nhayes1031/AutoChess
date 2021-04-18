@@ -1,6 +1,0 @@
-﻿apiVersion: "allocation.agones.dev/v1"
-kind: GameServerAllocation
-spec:
-  required:
-    matchLabels:
-      agones.dev/fleet: autochess

@@ -18,6 +18,34 @@ The server is done using a custom game engine. The networking is done using Lidg
 
 ### Current
 
+![Client clicking around](Showcase/ClientShowcase_04_18_21.gif)
+
+Client is able to:
+	- Connect to game server running
+	- Reroll
+	- Buy Units
+	- Buy XP
+	- Level up
+	- Sell Units
+  	- Show purchased units on a bench
+	- Shows current gold
+	- Shows other players connected to the server
+	- Shows the current unit selected
+	- Shows current phase
+	- Shows units as they move
+	- Shows units as they attack
+
+Game Server is able to:
+    - Simulate combat for ranged and melee units
+
+_* Gold looks like it isn't working correctly because certain actions don't have costs associated with them for the showcase_
+
+### Old
+
+This section contains old showcases of the client.
+
+`March 3rd, 2021`
+
 ![Client clicking around](Showcase/ClientShowcase_03_03_21.gif)
 
 Client is able to:
@@ -34,10 +62,6 @@ Client is able to:
 	- Shows the current unit selected
 
 _* Gold looks like it isn't working correctly because certain actions don't have costs associated with them for the showcase_
-
-### Old
-
-This section contains old showcases of the client.
 
 `February 24th, 2021`
 

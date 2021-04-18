@@ -6,6 +6,7 @@ using Server.Game.Timeline;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Server.Game {
     public class GameLogic {
@@ -169,9 +170,12 @@ namespace Server.Game {
 
         private void HandlePlayerDatasCreated(Dictionary<NetConnection, PlayerData> playerDatas) {
             this.playerDatas = playerDatas;
+            SendInitialGameSetupPacket();
+
+            Thread.Sleep(100);
+
             state = GameState.Running;
             timeline.Start();
-            SendInitialGameSetupPacket();
         }
 
         private void HandleRoundStart() {
