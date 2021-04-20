@@ -231,7 +231,7 @@ namespace Server.Game {
         private void SendTransitionPacketToAllUsers() {
             NetOutgoingMessage message = server.CreateMessage();
             new TransitionUpdatePacket() {
-                Event = timeline.CurrentEvent.GetType().ToString()
+                Event = timeline.CurrentEvent.ToString()
             }.PacketToNetOutgoingMessage(message);
             server.SendToAll(message, NetDeliveryMethod.ReliableOrdered);
         }

@@ -2952,6 +2952,7 @@ GameObject:
   - component: {fileID: 1332820181}
   - component: {fileID: 1332820180}
   - component: {fileID: 1332820179}
+  - component: {fileID: 1332820182}
   m_Layer: 5
   m_Name: PlayerPorts
   m_TagString: Untagged
@@ -3090,6 +3091,19 @@ RectTransform:
   m_AnchoredPosition: {x: 1779.8, y: 308.53}
   m_SizeDelta: {x: 140.61795, y: -837.06464}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &1332820182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332820178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ffdcd75b6d7bc4abcbdbd1aef7b62c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portsText: {fileID: 1332820179}
 --- !u!1 &1344048660
 GameObject:
   m_ObjectHideFlags: 0
