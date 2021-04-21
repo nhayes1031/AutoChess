@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Server.Game.Systems {
     public class Board {
-        public Action Draw;
+        public Action<Guid, Guid> Draw;
         public Action<Guid> Victory;
         public Action<HexCoords> UnitDied;
 
@@ -45,7 +45,7 @@ namespace Server.Game.Systems {
             if (unitsByTeam.Count() == 1) {
                 Victory?.Invoke(unitsByTeam.First().Key);
             } else if (!unitsByTeam.Any()) {
-                Draw?.Invoke();
+                Draw?.Invoke(unitsByTeam.First().Key, unitsByTeam.Last().Key);
             }
         }
 

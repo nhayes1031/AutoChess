@@ -5,6 +5,7 @@ using Server.Game.EC.Components;
 using Server.Game.Messages;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Server.Game.Systems {
     public class Battle {
@@ -15,6 +16,8 @@ namespace Server.Game.Systems {
         private readonly PlayerData player1;
         private readonly PlayerData player2;
         private bool finished;
+
+        public bool Finished => finished;
 
         public Battle(PlayerData player1, PlayerData player2) {
             hub = Hub.Default;
@@ -47,6 +50,10 @@ namespace Server.Game.Systems {
                 simulation.Update(time, deltaTime);
         }
 
+        public void ForceFinish() {
+            HandleDraw(player1.Id, player2.Id);
+        }
+
         private void HandleUnitDied(HexCoords coords) {
             Hub.Default.Publish(new SimulationUnitDied() {
                 connections = new () { player1.Connection, player2.Connection },
@@ -59,7 +66,7 @@ namespace Server.Game.Systems {
 
             var winner = player1.Id == winnerId ? player1 : player2;
             var loser = player1.Id == winnerId ? player2 : player1;
-            var damage = CalculateDamage();
+            var damage = CalculateDamage(loser.Id);
 
             loser.Health -= damage;
             Hub.Default.Publish(new SimulationEndedInVictory() {
@@ -68,12 +75,17 @@ namespace Server.Game.Systems {
             });
         }
 
-        private void HandleDraw() {
+        private void HandleDraw(Guid participant1, Guid participant2) {
             finished = true;
+
+            var participant1Damage = CalculateDamage(participant1);
+            var participant2Damage = CalculateDamage(participant2);
 
             Hub.Default.Publish(new SimulationEndedInDraw() {
                 participant1 = player1.Connection,
-                participant2 = player2.Connection
+                participant1Damage = participant1Damage,
+                participant2 = player2.Connection,
+                participant2Damage = participant2Damage,
             });
         }
 
@@ -94,9 +106,9 @@ namespace Server.Game.Systems {
             });
         }
 
-        private int CalculateDamage() {
+        private int CalculateDamage(Guid playerId) {
             int damage = 0;
-            var units = battlefield.GetUnits();
+            var units = battlefield.GetUnits().Where(x => x.GetComponent<TeamComponent>().Team != playerId);
             foreach (var unit in units) {
                 damage += unit.GetComponent<StatsComponent>().StarLevel;
             }

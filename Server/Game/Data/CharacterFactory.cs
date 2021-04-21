@@ -142,7 +142,7 @@ namespace Server.Game {
         private static Entity ConstructMage(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 4,
                 Armor = 1,
                 MagicArmor = 1,
@@ -165,7 +165,7 @@ namespace Server.Game {
         private static Entity ConstructWarrior(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -188,7 +188,7 @@ namespace Server.Game {
         private static Entity ConstructPriest(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 3,
                 Armor = 1,
                 MagicArmor = 1,
@@ -211,7 +211,7 @@ namespace Server.Game {
         private static Entity ConstructHunter(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 4,
                 Armor = 1,
                 MagicArmor = 1,
@@ -234,7 +234,7 @@ namespace Server.Game {
         private static Entity ConstructPaladin(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -257,7 +257,7 @@ namespace Server.Game {
         private static Entity ConstructRogue(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -280,7 +280,7 @@ namespace Server.Game {
         private static Entity ConstructFighter(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -303,7 +303,7 @@ namespace Server.Game {
         private static Entity ConstructRanger(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 3,
                 Armor = 1,
                 MagicArmor = 1,
@@ -326,7 +326,7 @@ namespace Server.Game {
         private static Entity ConstructCleric(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -349,7 +349,7 @@ namespace Server.Game {
         private static Entity ConstructBard(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -372,7 +372,7 @@ namespace Server.Game {
         private static Entity ConstructSummoner(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 3,
                 Armor = 1,
                 MagicArmor = 1,
@@ -395,7 +395,7 @@ namespace Server.Game {
         private static Entity ConstructTank(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 150,
+                Health = 60,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -418,7 +418,7 @@ namespace Server.Game {
         private static Entity ConstructBladecaller(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -443,7 +443,7 @@ namespace Server.Game {
         private static Entity ConstructCultist(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -466,7 +466,7 @@ namespace Server.Game {
         private static Entity ConstructAssassin(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 90,
+                Health = 30,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -489,7 +489,7 @@ namespace Server.Game {
         private static Entity ConstructDruid(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -512,7 +512,7 @@ namespace Server.Game {
         private static Entity ConstructHealer(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 3,
                 Armor = 1,
                 MagicArmor = 1,
@@ -535,7 +535,7 @@ namespace Server.Game {
         private static Entity ConstructBeastmaster(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -558,7 +558,7 @@ namespace Server.Game {
         private static Entity ConstructWizard(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 4,
                 Armor = 1,
                 MagicArmor = 1,
@@ -581,7 +581,7 @@ namespace Server.Game {
         private static Entity ConstructSorcerer(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 4,
                 Armor = 1,
                 MagicArmor = 1,
@@ -604,7 +604,7 @@ namespace Server.Game {
         private static Entity ConstructBerserker(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -627,7 +627,7 @@ namespace Server.Game {
         private static Entity ConstructKnight(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -650,7 +650,7 @@ namespace Server.Game {
         private static Entity ConstructArchon(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -673,7 +673,7 @@ namespace Server.Game {
         private static Entity ConstructHerald(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -696,7 +696,7 @@ namespace Server.Game {
         private static Entity ConstructPirate(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -719,7 +719,7 @@ namespace Server.Game {
         private static Entity ConstructNecromancer(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 3,
                 Armor = 1,
                 MagicArmor = 1,
@@ -744,7 +744,7 @@ namespace Server.Game {
         private static Entity ConstructEnchanter(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -767,7 +767,7 @@ namespace Server.Game {
         private static Entity ConstructSage(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -790,7 +790,7 @@ namespace Server.Game {
         private static Entity ConstructWarlock(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 3,
                 Armor = 1,
                 MagicArmor = 1,
@@ -813,7 +813,7 @@ namespace Server.Game {
         private static Entity ConstructMonk(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -836,7 +836,7 @@ namespace Server.Game {
         private static Entity ConstructTemplar(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -859,7 +859,7 @@ namespace Server.Game {
         private static Entity ConstructSentinel(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 125,
+                Health = 50,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -882,7 +882,7 @@ namespace Server.Game {
         private static Entity ConstructBattlemage(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -905,7 +905,7 @@ namespace Server.Game {
         private static Entity ConstructProtector(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 200,
+                Health = 70,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -928,7 +928,7 @@ namespace Server.Game {
         private static Entity ConstructMystic(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 3,
                 Armor = 1,
                 MagicArmor = 1,
@@ -951,7 +951,7 @@ namespace Server.Game {
         private static Entity ConstructElementalist(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -974,7 +974,7 @@ namespace Server.Game {
         private static Entity ConstructConjurer(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -997,7 +997,7 @@ namespace Server.Game {
         private static Entity ConstructArbiter(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1020,7 +1020,7 @@ namespace Server.Game {
         private static Entity ConstructShaman(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1045,7 +1045,7 @@ namespace Server.Game {
         private static Entity ConstructSeer(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 3,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1068,7 +1068,7 @@ namespace Server.Game {
         private static Entity ConstructRevenant(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1091,7 +1091,7 @@ namespace Server.Game {
         private static Entity ConstructTrickster(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1114,7 +1114,7 @@ namespace Server.Game {
         private static Entity ConstructProvoker(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 125,
+                Health = 50,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1137,7 +1137,7 @@ namespace Server.Game {
         private static Entity ConstructKeeper(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 150,
+                Health = 60,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1160,7 +1160,7 @@ namespace Server.Game {
         private static Entity ConstructInvoker(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1183,7 +1183,7 @@ namespace Server.Game {
         private static Entity ConstructWanderer(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1206,7 +1206,7 @@ namespace Server.Game {
         private static Entity ConstructSiren(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1229,7 +1229,7 @@ namespace Server.Game {
         private static Entity ConstructCrusader(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 125,
+                Health = 50,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1252,7 +1252,7 @@ namespace Server.Game {
         private static Entity ConstructReaper(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1275,7 +1275,7 @@ namespace Server.Game {
         private static Entity ConstructBroodwarden(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 3,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1300,7 +1300,7 @@ namespace Server.Game {
         private static Entity ConstructDreadnought(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1323,7 +1323,7 @@ namespace Server.Game {
         private static Entity ConstructStalker(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1346,7 +1346,7 @@ namespace Server.Game {
         private static Entity ConstructIllusionist(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1369,7 +1369,7 @@ namespace Server.Game {
         private static Entity ConstructStrider(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1392,7 +1392,7 @@ namespace Server.Game {
         private static Entity ConstructBetrayer(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1415,7 +1415,7 @@ namespace Server.Game {
         private static Entity ConstructNaturalist(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 2,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1438,7 +1438,7 @@ namespace Server.Game {
         private static Entity ConstructCharlatan(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 100,
+                Health = 40,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,
@@ -1461,7 +1461,7 @@ namespace Server.Game {
         private static Entity ConstructVindicator(HexCoords position, CharacterData character, Guid playerId, Hub simulationHub) {
             var state = new StateComponent();
             var stats = new StatsComponent() {
-                Health = 125,
+                Health = 50,
                 AttackRange = 1,
                 Armor = 1,
                 MagicArmor = 1,

@@ -20,7 +20,9 @@
         SimulationEndedInVictory,
         SimulationEndedInLoss,
         SimulationCombatStarted,
-        SimulationUnitDied
+        SimulationUnitDied,
+        PlayerDied,
+        GameOver
     }
 }
 

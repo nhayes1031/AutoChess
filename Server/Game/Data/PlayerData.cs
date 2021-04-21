@@ -1,4 +1,6 @@
 ﻿using Lidgren.Network;
+using PubSub;
+using Server.Game.Messages;
 using Server.Game.Systems;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,18 @@ namespace Server.Game {
 
         public Guid Id { private set; get; }
         public NetConnection Connection { private set; get; }
-        public int Health;
+        private int health;
+        public int Health { 
+            get { return health; }
+            set {
+                health = value;
+                if (health <= 0) {
+                    Hub.Default.Publish(new PlayerDied() {
+                        who = Connection
+                    });
+                }
+            } 
+        }
         public int Level;
         public int Gold;
         public int XP;
@@ -21,10 +34,12 @@ namespace Server.Game {
         public Dictionary<HexCoords, CharacterData> Board;
         public FixedSizeList<CharacterData> Shop;
 
+        public bool IsAlive => Health > 0;
+
         public PlayerData(NetConnection connection) {
             this.Connection = connection;
             Id = Guid.NewGuid();
-            Health = 50;
+            Health = 25;
             Level = 1;
             Gold = 0;
             XP = 0;

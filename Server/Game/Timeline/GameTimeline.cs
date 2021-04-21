@@ -1,4 +1,6 @@
 ﻿using Lidgren.Network;
+using PubSub;
+using Server.Game.Messages;
 using System;
 using System.Collections.Generic;
 
@@ -23,6 +25,7 @@ namespace Server.Game.Timeline {
             shopping = new Shopping();
             transitionToBattling = new TransitionToBattling();
             battling = new Battling();
+            battling.GameOver += HandleGameOver;
             transitionToShopping = new TransitionToShopping();
             forcefullyEndingGame = new ForcefullyEndingGame(EndGame);
 
@@ -75,6 +78,7 @@ namespace Server.Game.Timeline {
                 Changed?.Invoke();
             }
         }
+
         public void Reset() {
             events[current].OnExit();
             current = 0;
@@ -82,6 +86,13 @@ namespace Server.Game.Timeline {
 
         private void EndGame() {
             Finished?.Invoke();
+        }
+
+        private void HandleGameOver(Guid playerId) {
+            EndGame();
+            Hub.Default.Publish(new GameOver() {
+                Winner = playerId
+            });
         }
     }
 }

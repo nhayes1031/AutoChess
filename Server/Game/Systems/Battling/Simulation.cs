@@ -5,7 +5,7 @@ using System;
 namespace Server.Game.Systems {
     public class Simulation {
         public Action<Guid> Victory;
-        public Action Draw;
+        public Action<Guid, Guid> Draw;
 
         private readonly Board board;
 
@@ -16,8 +16,8 @@ namespace Server.Game.Systems {
             board.Victory += HandleVictory;
         }
 
-        private void HandleDraw() {
-            Draw?.Invoke();
+        private void HandleDraw(Guid participant1, Guid participant2) {
+            Draw?.Invoke(participant1, participant2);
         }
 
         private void HandleVictory(Guid winner) {

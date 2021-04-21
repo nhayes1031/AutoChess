@@ -1,6 +1,4 @@
 ﻿using Lidgren.Network;
-using PubSub;
-using Server.Game.Messages;
 using Server.Game.Systems;
 using Server.Game.Timers;
 using System;
@@ -9,9 +7,12 @@ using System.Linq;
 
 namespace Server.Game.Timeline {
     public class Battling : IEvent {
+        public Action<Guid> GameOver;
+
         private Timer battlingTimer;
         private bool timerElapsed;
         private List<Battle> battles = new List<Battle>();
+        private Dictionary<NetConnection, PlayerData> playerDatas;
 
         public bool TimerExpired => timerElapsed;
 
@@ -33,13 +34,35 @@ namespace Server.Game.Timeline {
         public void OnExit() {
             battlingTimer.Stop();
             timerElapsed = false;
+
+            CleanUpBattles();
+            CheckForWinner();
+        }
+
+        private void CheckForWinner() {
+            var playersLeftAlive = playerDatas
+                .Select(x => x.Value)
+                .Where(x => x.IsAlive);
+
+            if (playersLeftAlive.Count() == 1) {
+                GameOver?.Invoke(playersLeftAlive.First().Id);
+            }
+        }
+
+        private void CleanUpBattles() {
+            foreach (var battle in battles) {
+                if (!battle.Finished)
+                    battle.ForceFinish();
+            }
             battles.Clear();
         }
 
         public void OnEnter(Dictionary<NetConnection, PlayerData> playerDatas) {
+            this.playerDatas = playerDatas;
             // TODO: This fails for odd number of players
             var pairs = playerDatas
                 .Select(x => x.Value)
+                .Where(x => x.IsAlive)
                 .Select((x, i) => new { Index = i, Value = x })
                 .GroupBy(x => x.Index / 2)
                 .Select(x => x.Select(v => v.Value).ToList())

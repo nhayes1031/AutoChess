@@ -1,6 +1,7 @@
 ﻿using Lidgren.Network;
 using Server.Game.EC;
 using Server.Game.Systems;
+using System;
 using System.Collections.Generic;
 
 namespace Server.Game.Messages {
@@ -64,10 +65,18 @@ namespace Server.Game.Messages {
     }
     public struct SimulationEndedInDraw {
         public NetConnection participant1;
+        public int participant1Damage;
         public NetConnection participant2;
+        public int participant2Damage;
     }
     public struct SimulationUnitDied {
         public List<NetConnection> connections;
         public HexCoords unit;
+    }
+    public struct PlayerDied {
+        public NetConnection who;
+    }
+    public struct GameOver {
+        public Guid Winner;
     }
 }

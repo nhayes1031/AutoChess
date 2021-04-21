@@ -12,13 +12,11 @@ namespace Server.Game.Systems {
     public class PlayerInitializer {
         public Action<Dictionary<NetConnection, PlayerData>> PlayerDatasCreated;
 
-        private readonly NetServer server;
         private readonly Timer timeout;
 
         private readonly Dictionary<NetConnection, PlayerData> playerDatas;
 
-        public PlayerInitializer(NetServer server) {
-            this.server = server;
+        public PlayerInitializer() {
             playerDatas = new Dictionary<NetConnection, PlayerData>();
             PlayerData.PlayerCreated += HandlePlayerCreated;
 

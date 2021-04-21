@@ -3,7 +3,6 @@ using PubSub;
 using Server.Game.Messages;
 using Server.Game.Systems;
 using Server.Game.Timeline;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -41,7 +40,7 @@ namespace Server.Game {
 
             shop = new Shop();
 
-            playerIntializer = new PlayerInitializer(server);
+            playerIntializer = new PlayerInitializer();
             playerIntializer.PlayerDatasCreated += HandlePlayerDatasCreated;
 
             timeline = new GameTimeline();
@@ -77,6 +76,9 @@ namespace Server.Game {
         #region Event Handlers
         private void PurchaseReroll(PurchaseRerollRequested e) {
             var playerData = playerDatas[e.client];
+            if (!playerData.IsAlive)
+                return;
+
             var status = playerData.PayForReroll();
             if (status) {
                 var newShop = shop.RequestReroll(playerData);
@@ -86,7 +88,11 @@ namespace Server.Game {
         }
 
         private void PurchaseUnit(PurchaseUnitRequested e) {
-            var status = playerDatas[e.client].Purchase(e.packet.Name);
+            var playerData = playerDatas[e.client];
+            if (!playerData.IsAlive)
+                return;
+
+            var status = playerData.Purchase(e.packet.Name);
             if (status) {
                 SendPurchaseUnitPacket(e.client, e.packet.Name);
             }
@@ -94,34 +100,51 @@ namespace Server.Game {
 
         private void PurchaseXP(PurchaseXPRequested e) {
             var playerData = playerDatas[e.client];
+            if (!playerData.IsAlive)
+                return;
+
             playerData.PurchaseXP();
             SendUpdatePlayerInfoPacket(e.client, playerData);
         }
 
         private void MoveToBenchFromBoard(MoveToBenchFromBoardRequested e) {
-            var status = playerDatas[e.client].MoveUnit(
+            var playerData = playerDatas[e.client];
+            if (!playerData.IsAlive)
+                return;
+
+            var status = playerData.MoveUnit(
                 CharacterFactory.CreateFromName(e.packet.Character), 
                 e.packet.FromCoords, 
                 e.packet.ToSeat
             );
+
             if (status) {
                 SendUpdatePlayerInfoPacket(e.client, playerDatas[e.client]);
             }
         }
 
         private void RepositionOnBoard(RepositionOnBoardRequested e) {
-            var status = playerDatas[e.client].MoveUnit(
+            var playerData = playerDatas[e.client];
+            if (!playerData.IsAlive)
+                return;
+
+            var status = playerData.MoveUnit(
                 CharacterFactory.CreateFromName(e.packet.Character), 
                 e.packet.FromCoords, 
                 e.packet.ToCoords
             );
+
             if (status) {
                 SendUpdatePlayerInfoPacket(e.client, playerDatas[e.client]);
             }
         }
 
         private void MoveToBoardFromBench(MoveToBoardFromBenchRequested e) {
-            var status = playerDatas[e.client].MoveUnit(
+            var playerData = playerDatas[e.client];
+            if (!playerData.IsAlive)
+                return;
+
+            var status = playerData.MoveUnit(
                 CharacterFactory.CreateFromName(e.packet.Character), 
                 e.packet.FromSeat, 
                 e.packet.ToCoords
@@ -134,7 +157,11 @@ namespace Server.Game {
         }
 
         private void RepositionOnBench(RepositionOnBenchRequested e) {
-            var status = playerDatas[e.client].MoveUnit(
+            var playerData = playerDatas[e.client];
+            if (!playerData.IsAlive)
+                return;
+
+            var status = playerData.MoveUnit(
                 CharacterFactory.CreateFromName(e.packet.Character), 
                 e.packet.FromSeat, 
                 e.packet.ToSeat
@@ -145,7 +172,11 @@ namespace Server.Game {
         }
 
         private void SellUnitFromBench(SellUnitFromBenchRequested e) {
-            var status = playerDatas[e.client].SellUnit(
+            var playerData = playerDatas[e.client];
+            if (!playerData.IsAlive)
+                return;
+
+            var status = playerData.SellUnit(
                 CharacterFactory.CreateFromName(e.packet.Name),
                 e.packet.Seat
             );
@@ -157,7 +188,11 @@ namespace Server.Game {
         }
 
         private void SellUnitFromBoard(SellUnitFromBoardRequested e) {
-            var status = playerDatas[e.client].SellUnit(
+            var playerData = playerDatas[e.client];
+            if (!playerData.IsAlive)
+                return;
+
+            var status = playerData.SellUnit(
                 CharacterFactory.CreateFromName(e.packet.Name),
                 e.packet.Coords
             );

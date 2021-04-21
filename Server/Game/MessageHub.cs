@@ -17,6 +17,8 @@ namespace Server.Game {
             hub.Subscribe<SimulationEndedInVictory>(this, SendSimulationVictoryPacket);
             hub.Subscribe<SimulationEndedInDraw>(this, SendSimulationDrawPacket);
             hub.Subscribe<SimulationUnitDied>(this, SendSimulationUnitDiedPacket);
+            hub.Subscribe<PlayerDied>(this, SendPlayerDiedPacket);
+            hub.Subscribe<GameOver>(this, SendGameOverPacket);
         }
 
         private void SendUnitMovedPacket(SimulationUnitMoved e) {
@@ -102,13 +104,35 @@ namespace Server.Game {
 
         private void SendSimulationDrawPacket(SimulationEndedInDraw e) {
             NetOutgoingMessage message = server.CreateMessage();
-            new SimulationEndedInDrawPacket().PacketToNetOutgoingMessage(message);
+            new SimulationEndedInDrawPacket() {
+                Damage = e.participant1Damage
+            }.PacketToNetOutgoingMessage(message);
 
             NetOutgoingMessage message2 = server.CreateMessage();
-            new SimulationEndedInDrawPacket().PacketToNetOutgoingMessage(message2);
+            new SimulationEndedInDrawPacket() {
+                Damage = e.participant2Damage
+            }.PacketToNetOutgoingMessage(message2);
 
             server.SendMessage(message, e.participant1, NetDeliveryMethod.ReliableOrdered);
             server.SendMessage(message2, e.participant2, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        private void SendPlayerDiedPacket(PlayerDied e) {
+            NetOutgoingMessage message = server.CreateMessage();
+            new PlayerDiedPacket() {
+                Who = e.who.RemoteEndPoint.Port
+            }.PacketToNetOutgoingMessage(message);
+
+            server.SendToAll(message, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        private void SendGameOverPacket(GameOver e) {
+            NetOutgoingMessage message = server.CreateMessage();
+            new GameOverPacket() {
+                Winner = e.Winner
+            }.PacketToNetOutgoingMessage(message);
+
+            server.SendToAll(message, NetDeliveryMethod.ReliableOrdered);
         }
     }
 }
