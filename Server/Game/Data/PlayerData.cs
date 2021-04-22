@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Server.Game {
-    public class PlayerData {
+    public class PlayerData : IPlayer {
         public static Action<PlayerData> PlayerCreated;
 
         private const int XP_COST = 4;
@@ -27,12 +27,12 @@ namespace Server.Game {
                 }
             } 
         }
-        public int Level;
-        public int Gold;
-        public int XP;
-        public FixedSizeList<CharacterData> Bench;
-        public Dictionary<HexCoords, CharacterData> Board;
-        public FixedSizeList<CharacterData> Shop;
+        public int Level { get; set; }
+        public int Gold { get; set; }
+        public int XP { get; set; }
+        public FixedSizeList<CharacterData> Bench { get; set; }
+        public Dictionary<HexCoords, CharacterData> Board { get; set; }
+        public FixedSizeList<CharacterData> Shop { get; set; }
 
         public bool IsAlive => Health > 0;
 

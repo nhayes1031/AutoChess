@@ -55,8 +55,8 @@ namespace Server.Game.Messages {
         public int damage;
     }
     public struct SimulationCombatStarted {
-        public PlayerData bottom;
-        public PlayerData top;
+        public IPlayer bottom;
+        public IPlayer top;
         public List<Entity> units;
     }
     public struct SimulationEndedInVictory {

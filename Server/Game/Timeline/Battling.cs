@@ -1,4 +1,5 @@
 ﻿using Lidgren.Network;
+using Server.Extensions;
 using Server.Game.Systems;
 using Server.Game.Timers;
 using System;
@@ -59,19 +60,37 @@ namespace Server.Game.Timeline {
 
         public void OnEnter(Dictionary<NetConnection, PlayerData> playerDatas) {
             this.playerDatas = playerDatas;
-            // TODO: This fails for odd number of players
-            var pairs = playerDatas
-                .Select(x => x.Value)
-                .Where(x => x.IsAlive)
+            var pairs = FindPairs();
+
+            foreach (var pair in pairs) {
+                battles.Add(new Battle(pair.Item1, pair.Item2));
+            }
+            battlingTimer.Start();
+        }
+
+        private List<Tuple<IPlayer, IPlayer>> FindPairs() {
+            var alivePlayers = this.playerDatas
+                .Where(x => x.Value.IsAlive)
+                .Select(x => x.Value as IPlayer)
+                .ToList();
+            alivePlayers.Shuffle();
+            
+            if (alivePlayers.Count % 2 != 0) {
+                var ghost = new GhostPlayerData(alivePlayers.PickRandom());
+                alivePlayers.Add(ghost);
+            }
+
+            var groups = alivePlayers
                 .Select((x, i) => new { Index = i, Value = x })
                 .GroupBy(x => x.Index / 2)
                 .Select(x => x.Select(v => v.Value).ToList())
                 .ToList();
 
-            foreach (var pair in pairs) {
-                battles.Add(new Battle(pair.First(), pair.Last()));
+            var pairs = new List<Tuple<IPlayer, IPlayer>>();
+            foreach (var group in groups) {
+                pairs.Add(new Tuple<IPlayer, IPlayer>(group.First(), group.Last()));
             }
-            battlingTimer.Start();
+            return pairs;
         }
 
         private void HandleTimerExpired() {

@@ -13,13 +13,13 @@ namespace Server.Game.Systems {
         private readonly Simulation simulation;
         private readonly Hub hub;
         private readonly Hub localHub;
-        private readonly PlayerData player1;
-        private readonly PlayerData player2;
+        private readonly IPlayer player1;
+        private readonly IPlayer player2;
         private bool finished;
 
         public bool Finished => finished;
 
-        public Battle(PlayerData player1, PlayerData player2) {
+        public Battle(IPlayer player1, IPlayer player2) {
             hub = Hub.Default;
             finished = false;
             localHub = new Hub();
@@ -115,7 +115,7 @@ namespace Server.Game.Systems {
             return damage;
         }
 
-        private List<Entity> ConstructCharacterEntities(PlayerData player) {
+        private List<Entity> ConstructCharacterEntities(IPlayer player) {
             var entities = new List<Entity>();
             foreach (var entry in player.Board) {
                 var entity = CharacterFactory.ConstructEntityFromCharacterData(entry.Key, entry.Value, player.Id, localHub);
