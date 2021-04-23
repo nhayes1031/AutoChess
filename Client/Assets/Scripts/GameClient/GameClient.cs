@@ -22,6 +22,8 @@ namespace Client.Game {
         public Action SimulationEndedInVictory;
         public Action SimulationEndedInLoss;
         public Action<SimulationUnitDiedPacket> SimulationUnitDied;
+        public Action<PlayerDiedPacket> PlayerDied;
+        public Action<GameOverPacket> GameOver;
 
         public List<int> PlayerPorts;
         public Guid PlayerId => playerId;
@@ -132,6 +134,18 @@ namespace Client.Game {
                                 packet = new ConnectPacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 playerId = ((ConnectPacket)packet).playerId;
+                                break;
+                            case (int)PacketTypes.PlayerDied:
+                                packet = new PlayerDiedPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                // TODO: Disable all packets that can be sent out when the player has died
+                                PlayerDied?.Invoke((PlayerDiedPacket)packet);
+                                break;
+                            case (int)PacketTypes.GameOver:
+                                packet = new GameOverPacket();
+                                packet.NetIncomingMessageToPacket(message);
+                                // TODO: Clean up the game server connection
+                                GameOver?.Invoke((GameOverPacket)packet);
                                 break;
                             default:
                                 Debug.Log("Game server received a packet");

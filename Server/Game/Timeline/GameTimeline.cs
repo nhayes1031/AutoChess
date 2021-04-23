@@ -89,10 +89,10 @@ namespace Server.Game.Timeline {
         }
 
         private void HandleGameOver(Guid playerId) {
-            EndGame();
             Hub.Default.Publish(new GameOver() {
                 Winner = playerId
             });
+            EndGame();
         }
     }
 }

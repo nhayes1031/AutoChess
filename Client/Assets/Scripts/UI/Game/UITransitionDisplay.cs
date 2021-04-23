@@ -8,14 +8,9 @@ public class UITransitionDisplay : MonoBehaviour {
 
     private void Start() {
         Manager.GameClient.TransitionUpdate += DisplayTransitionUpdate;
-        Manager.GameClient.TransitionUpdate += ReadTransitionPacket;
     }
 
     private void DisplayTransitionUpdate(TransitionUpdatePacket packet) {
         transitionText.text = packet.Event;
-    }
-
-    private void ReadTransitionPacket(TransitionUpdatePacket packet) {
-        
     }
 }

@@ -54,6 +54,13 @@ namespace Client {
             }
         }
 
+        public static void DisconnectGameClient() {
+            if (GameClient != null) {
+                GameClient.Disconnect();
+                GameClient = new GameClient();
+            }
+        }
+
         private void InitializeRealClients() {
             MatchmakingClient = new MatchmakingClient(port, server, gameName);
             GameClient = new GameClient();

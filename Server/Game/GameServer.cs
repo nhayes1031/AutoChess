@@ -64,7 +64,8 @@ namespace Server.Game {
 
         public void CleanUp() {
             Logger.Debug("Cleaning up Game Server");
-            gameLoop.CleanUp();
+            // TODO: Agones should dispose of the game server now
+
             currentState = ServerState.ReadyForNewGame;
             server.Connections.Clear();
             thread = null;

@@ -120,7 +120,7 @@ namespace Server.Game {
         private void SendPlayerDiedPacket(PlayerDied e) {
             NetOutgoingMessage message = server.CreateMessage();
             new PlayerDiedPacket() {
-                Who = e.who.RemoteEndPoint.Port
+                Who = e.who
             }.PacketToNetOutgoingMessage(message);
 
             server.SendToAll(message, NetDeliveryMethod.ReliableOrdered);

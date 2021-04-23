@@ -22,7 +22,7 @@ namespace Server.Game {
                 health = value;
                 if (health <= 0) {
                     Hub.Default.Publish(new PlayerDied() {
-                        who = Connection
+                        who = Id
                     });
                 }
             } 
@@ -39,7 +39,7 @@ namespace Server.Game {
         public PlayerData(NetConnection connection) {
             this.Connection = connection;
             Id = Guid.NewGuid();
-            Health = 25;
+            Health = 1;
             Level = 1;
             Gold = 0;
             XP = 0;

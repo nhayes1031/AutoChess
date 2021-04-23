@@ -74,7 +74,7 @@ namespace Server.Game.Messages {
         public HexCoords unit;
     }
     public struct PlayerDied {
-        public NetConnection who;
+        public Guid who;
     }
     public struct GameOver {
         public Guid Winner;

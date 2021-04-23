@@ -104,7 +104,6 @@ namespace Client.UI {
 
             ClearBoard();
 
-            Debug.Log(packet.bottomPlayer);
             if (packet.bottomPlayer == Manager.GameClient.PlayerId) {
                 flipCoords = false;
             } else {
