@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AgonesSDK" Version="1.13.0" />
     <PackageReference Include="Lidgren.Network" Version="1.0.2" />
     <PackageReference Include="PubSub" Version="4.0.1" />
   </ItemGroup>

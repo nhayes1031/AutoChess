@@ -24,7 +24,7 @@ namespace Client.Matchmaking {
             NetOutgoingMessage message = Client.CreateMessage();
             new ConnectPacket().PacketToNetOutgoingMessage(message);
 
-            Client.Connect("127.0.0.1", 34560, message);
+            Client.Connect("35.247.24.241", 34560, message);
         }
 
         public void ReceiveMessage(object peer) {

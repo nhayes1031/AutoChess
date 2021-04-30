@@ -3,4 +3,4 @@ kind: GameServerAllocation
 spec:
   required:
     matchLabels:
-      agones.dev/fleet: autochess
+      agones.dev/fleet: autochess-game

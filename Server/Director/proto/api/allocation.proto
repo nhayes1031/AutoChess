@@ -1,0 +1,58 @@
+﻿syntax = "proto3";
+package allocation;
+
+import "google/api/annotations.proto";
+
+service AllocationService {
+ rpc Allocate(AllocationRequest) returns (AllocationResponse) {
+   option (google.api.http) = {
+     post: "/gameserverallocation"
+     body: "*"
+   };
+ }
+}
+
+message AllocationRequest {
+  string namespace = 1;
+
+  MultiClusterSetting multiClusterSetting = 2;
+
+  LabelSelector requiredGameServerSelector = 3;
+
+  repeated LabelSelector preferredGameServerSelectors = 4;
+
+  SchedulingStrategy scheduling = 5;
+  enum SchedulingStrategy {
+    Packed = 0;
+    Distributed = 1;
+  }
+
+  MetaPatch metaPatch = 6;
+}
+
+message AllocationResponse {
+  string gameServerName = 2;
+  repeated GameServerStatusPort ports = 3;
+  string address = 4;
+  string nodeName = 5;
+
+  message GameServerStatusPort {
+    string name = 1;
+    int32 port = 2;
+  }
+}
+
+message MultiClusterSetting {
+    bool enabled = 1;
+
+    LabelSelector policySelector = 2;
+}
+   
+message MetaPatch {
+    map<string, string> labels = 1;
+    map<string, string> annotations = 2;
+}
+
+message LabelSelector {
+	map<string, string> matchLabels = 1;
+}

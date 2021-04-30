@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 
 namespace Frontend {
     public class OpenMatchService {
-        private const string OM_FRONTEND_ENDPOINT_IN_CLUSTER = "http://open-match-frontend.open-match.svc.cluster.local:50504";
-        private const string OM_FRONTEND_ENDPOINT_ON_LOCALHOST = "http://localhost:50504";
+        private const string OM_FRONTEND_ENDPOINT_IN_CLUSTER = "http://my-release-open-match-frontend.open-match.svc.cluster.local:50504";
 
         public Action<NetConnection, Assignment> connectionAssigned;
 
@@ -18,7 +17,7 @@ namespace Frontend {
         private FrontendService.FrontendServiceClient client;
 
         public OpenMatchService() {
-            var channel = GrpcChannel.ForAddress(OM_FRONTEND_ENDPOINT_ON_LOCALHOST);
+            var channel = GrpcChannel.ForAddress(OM_FRONTEND_ENDPOINT_IN_CLUSTER);
             client = new FrontendService.FrontendServiceClient(channel);
 
             queuedTickets = new Dictionary<NetConnection, Ticket>();

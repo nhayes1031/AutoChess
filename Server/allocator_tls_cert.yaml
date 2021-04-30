@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: allocator-tls
+  namespace: agones-system
+spec:
+  commonName: 35.230.72.227
+  ipAddresses:
+    - 35.230.73.227
+  secretName: allocator-tls
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer

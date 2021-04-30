@@ -13,6 +13,6 @@ spec:
   template:
     spec:
       containers:
-      - name: autochess
-        image: mcr.microsoft.com/dotnet:5.0
-        imagePullPolicy: Always # add for development
+      - name: autochess-game
+        image: gcr.io/autochess-309516/autochess-game:latest
+        imagePullPolicy: Always

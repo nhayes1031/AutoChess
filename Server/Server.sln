@@ -17,6 +17,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game", "Game\Game.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTests", "GameTests\GameTests.csproj", "{45E7A9C1-BD73-48E3-90CB-4B5661D644A2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE12DA01-9BC7-4290-B97F-FC461AAEB4B2}"
+	ProjectSection(SolutionItems) = preProject
+		allocator_tls_cert.yaml = allocator_tls_cert.yaml
+		selfsigned_clusterissuer.yaml = selfsigned_clusterissuer.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -2,9 +2,9 @@
     public class Constants {
         public const int MAXIMUM_CONNECTIONS = 2;
         public const int MINIMUM_PLAYERS_FOR_A_GAME = 2;
-        public const int MAXIMUM_TIME_TO_WAIT_FOR_PLAYERS = 10000;
+        public const int MAXIMUM_TIME_TO_WAIT_FOR_PLAYERS = 300000;
         public const string LIDGREN_SERVER_NAME = "AutoChess Game";
-        public const int SERVER_IN_USE_TIMER = 10000;
+        public const int SERVER_IN_USE_TIMER = 900000;
         public const double MS_PER_UPDATE = 16.0d;
 
         public const int MAX_SHOPPING_TIME = 15000;

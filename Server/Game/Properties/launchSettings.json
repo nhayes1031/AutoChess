@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Game": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "deployment": "local"
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+﻿apiVersion: "agones.dev/v1"
+kind: Fleet
+metadata:
+  name: autochess-game
+spec:
+  replicas: 0
+  template:
+    spec:
+      ports:
+      - name: default
+        portPolicy: Dynamic
+        containerPort: 5000
+        protocol: UDP
+      template:
+        spec:
+          containers:
+          - name: autochess-game
+            image: gcr.io/autochess-309516/autochess-game:latest
+            imagePullPolicy: Always

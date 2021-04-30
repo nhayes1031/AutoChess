@@ -1,34 +1,60 @@
-﻿using Lidgren.Network;
+﻿using Agones;
+using Grpc.Core;
+using Lidgren.Network;
 using PubSub;
 using Server.Game.Messages;
+using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
 namespace Server.Game {
     public class GameServer {
-        private readonly NetServer server;
-        private readonly GameLoop gameLoop;
-        private readonly Hub hub;
+        private IAgonesSDK agones;
+        private Timer checkForServerUseTimer;
+        private GameLoop gameLoop;
+        private NetServer server;
 
-        private ServerState currentState;
-        private Thread thread;
-        //private Timer checkForServerUseTimer;
+        public GameServer() {
+            SubscribeToHub();
+            InitializeCheckForServerUseTimer();
+            InitializeVariables();
+        }
 
-        public bool InUse => currentState != ServerState.ReadyForNewGame;
-        public int Port => server.Port;
+        public async Task ConnectToAgonesAsync() {
+            bool ok = await agones.ConnectAsync();
+            if (!ok)
+                throw new Exception("Server - Failed to connect to Agones");
+        }
 
-        public GameServer(int port) {
-            hub = Hub.Default;
-            hub.Subscribe<GameFinished>(this, HandleGameFinished);
+        public async Task ReadyLidgrenServer() {
+            var gameServer = await agones.GetGameServerAsync();
+            var port = gameServer.Status.Ports[0].Port_;
+            Logger.Info("Assigned this port: " + port);
 
-            currentState = ServerState.ReadyForNewGame;
-            //checkForServerUseTimer = new Timer(Constants.SERVER_IN_USE_TIMER) {
-            //    AutoReset = true,
-            //    Enabled = true,
-            //};
-            //checkForServerUseTimer.Elapsed += CheckForServerUse;
+            StartLidgrenServer(port);
 
+            var status = await agones.ReadyAsync();
+            if (status.StatusCode != StatusCode.OK) {
+                throw new Exception("Server - Ready Failed");
+            }
+
+            new Thread(HealthChecks).Start();
+        }
+
+        private void SubscribeToHub() {
+            Hub.Default.Subscribe<GameFinished>(this, HandleGameFinished);
+        }
+
+        private void InitializeCheckForServerUseTimer() {
+            checkForServerUseTimer = new Timer(Constants.SERVER_IN_USE_TIMER) {
+                AutoReset = false
+            };
+            checkForServerUseTimer.Elapsed += CheckForServerUse;
+        }
+
+        private void StartLidgrenServer(int port) {
             var config = new NetPeerConfiguration(Constants.LIDGREN_SERVER_NAME) {
                 Port = port,
                 MaximumConnections = Constants.MAXIMUM_CONNECTIONS
@@ -38,52 +64,53 @@ namespace Server.Game {
 
             server = new NetServer(config);
             server.Start();
-
-            gameLoop = new GameLoop(server);
-
-            Logger.Debug("Host: " + server.Configuration.LocalAddress + " Port: " + server.Configuration.Port);
         }
 
-        public void Initialize() {
-            currentState = ServerState.InGame;
-
-            Logger.Info("Initializing Game Server");
+        private void InitializeVariables() {
+            if (Environment.GetEnvironmentVariable("deployment") == "local") {
+                agones = new LocalAgonesSDK();
+            } else {
+                agones = new AgonesSDK();
+            }
+        }
+        
+        public async Task Start() {
+            gameLoop = new GameLoop(server);
             gameLoop.Initialize();
 
-            thread = new Thread(UpdateLoop);
-            thread.Start();
+            new Thread(UpdateLoop).Start();
 
-            //checkForServerUseTimer.Start();
+            checkForServerUseTimer.Start();
+
+            await agones.AllocateAsync();
         }
 
         private void UpdateLoop() {
-            while (currentState != ServerState.ReadyForNewGame) {
+            while(true) {
                 gameLoop.Update();
             }
         }
 
-        public void CleanUp() {
-            Logger.Debug("Cleaning up Game Server");
-            // TODO: Agones should dispose of the game server now
-
-            currentState = ServerState.ReadyForNewGame;
-            server.Connections.Clear();
-            thread = null;
-            //checkForServerUseTimer.Stop();
+        private void HealthChecks() {
+            while(true) {
+                Thread.Sleep(500);
+                agones.HealthAsync();
+            }
         }
 
-        //private void CheckForServerUse(object source, ElapsedEventArgs e) {
-        //    if (server.ConnectionsCount == 0 && currentState != ServerState.ReadyForNewGame)
-        //        CleanUp();
-        //}
+        private void CleanUp() {
+            agones.ShutDownAsync();
+            agones.Dispose();
+            server.Shutdown("bye");
+        }
+
+        private void CheckForServerUse(object source, ElapsedEventArgs e) {
+            if (server.ConnectionsCount == 0)
+                CleanUp();
+        }
 
         private void HandleGameFinished(GameFinished e) {
             CleanUp();
-        }
-
-        private enum ServerState {
-            ReadyForNewGame,
-            InGame
         }
     }
 }

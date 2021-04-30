@@ -39,7 +39,7 @@ namespace Server.Game {
         public PlayerData(NetConnection connection) {
             this.Connection = connection;
             Id = Guid.NewGuid();
-            Health = 1;
+            Health = 20;
             Level = 1;
             Gold = 0;
             XP = 0;
