@@ -10,31 +10,15 @@ namespace Server.Game.Messages {
     }
     public struct PurchaseUnitRequested {
         public NetConnection client;
-        public PurchaseUnitPacket packet;
+        public RequestUnitPurchasePacket packet;
     }
-    public struct MoveToBoardFromBenchRequested {
+    public struct MoveUnitRequested {
         public NetConnection client;
-        public MoveToBoardFromBenchPacket packet;
+        public RequestMoveUnitPacket packet;
     }
-    public struct MoveToBenchFromBoardRequested {
+    public struct SellUnitRequested {
         public NetConnection client;
-        public MoveToBenchFromBoardPacket packet;
-    }
-    public struct RepositionOnBoardRequested {
-        public NetConnection client;
-        public RepositionOnBoardPacket packet;
-    }
-    public struct RepositionOnBenchRequested {
-        public NetConnection client;
-        public RepositionOnBenchPacket packet;
-    }
-    public struct SellUnitFromBenchRequested {
-        public NetConnection client;
-        public SellUnitFromBenchPacket packet;
-    }
-    public struct SellUnitFromBoardRequested {
-        public NetConnection client;
-        public SellUnitFromBoardPacket packet;
+        public RequestUnitSellPacket packet;
     }
     public struct PurchaseXPRequested {
         public NetConnection client;
@@ -57,7 +41,7 @@ namespace Server.Game.Messages {
     public struct SimulationCombatStarted {
         public IPlayer bottom;
         public IPlayer top;
-        public List<Entity> units;
+        public List<Tuple<string, BoardLocation>> units;
     }
     public struct SimulationEndedInVictory {
         public NetConnection winner;
@@ -78,5 +62,16 @@ namespace Server.Game.Messages {
     }
     public struct GameOver {
         public Guid Winner;
+    }
+    public struct UnitPurchased {
+        public NetConnection connection;
+        public int shopIndex;
+    }
+    public struct UnitLeveledUp {
+        public NetConnection connection;
+        public List<Tuple<string, ILocation>> units;
+        public string name;
+        public ILocation location;
+        public int starLevel;
     }
 }

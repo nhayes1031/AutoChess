@@ -58,7 +58,7 @@ namespace GameTests {
             var simulation = new Simulation(board);
 
             var asserted = false;
-            void handler() {
+            void handler(Guid one, Guid two) {
                 asserted = true;
             }
             simulation.Draw += handler;

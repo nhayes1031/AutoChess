@@ -1,6 +1,7 @@
 ﻿using Lidgren.Network;
 using PubSub;
 using Server.Game.Messages;
+using System;
 using System.Linq;
 
 namespace Server.Game {
@@ -23,15 +24,15 @@ namespace Server.Game {
 
         private void SendUnitMovedPacket(SimulationUnitMoved e) {
             NetOutgoingMessage message = server.CreateMessage();
-            new SimulationUnitMovedPacket() {
-                FromCoords = e.fromCoords,
-                ToCoords = e.toCoords
+            new UnitMovedPacket() {
+                FromCoords = new BoardLocation() { coords = e.fromCoords },
+                ToCoords = new BoardLocation() { coords = e.toCoords }
             }.PacketToNetOutgoingMessage(message);
 
             NetOutgoingMessage message2 = server.CreateMessage();
-            new SimulationUnitMovedPacket() {
-                FromCoords = e.fromCoords,
-                ToCoords = e.toCoords
+            new UnitMovedPacket() {
+                FromCoords = new BoardLocation() { coords = e.fromCoords },
+                ToCoords = new BoardLocation() { coords = e.toCoords }
             }.PacketToNetOutgoingMessage(message2);
 
             server.SendMessage(message, e.connections.First(), NetDeliveryMethod.ReliableOrdered);
@@ -40,16 +41,16 @@ namespace Server.Game {
 
         private void SendUnitAttackedPacket(SimulationUnitAttacked e) {
             NetOutgoingMessage message = server.CreateMessage();
-            new SimulationUnitAttackedPacket() {
-                Attacker = e.attacker,
-                Defender = e.defender,
+            new UnitAttackPacket() {
+                Attacker = new BoardLocation { coords = e.attacker },
+                Defender = new BoardLocation { coords = e.defender },
                 Damage = e.damage
             }.PacketToNetOutgoingMessage(message);
 
             NetOutgoingMessage message2 = server.CreateMessage();
-            new SimulationUnitAttackedPacket() {
-                Attacker = e.attacker,
-                Defender = e.defender,
+            new UnitAttackPacket() {
+                Attacker = new BoardLocation { coords = e.attacker },
+                Defender = new BoardLocation { coords = e.defender },
                 Damage = e.damage
             }.PacketToNetOutgoingMessage(message2);
 
@@ -59,17 +60,17 @@ namespace Server.Game {
 
         private void SendCombatStartedPacket(SimulationCombatStarted e) {
             NetOutgoingMessage message = server.CreateMessage();
-            new SimulationCombatStartedPacket() {
-                bottomPlayer = e.bottom.Id,
-                topPlayer = e.top.Id,
-                units = e.units
+            new CombatStartedPacket() {
+                BottomPlayer = e.bottom.Id,
+                TopPlayer = e.top.Id,
+                Units = e.units
             }.PacketToNetOutgoingMessage(message);
 
             NetOutgoingMessage message2 = server.CreateMessage();
-            new SimulationCombatStartedPacket() {
-                bottomPlayer = e.bottom.Id,
-                topPlayer = e.top.Id,
-                units = e.units
+            new CombatStartedPacket() {
+                BottomPlayer = e.bottom.Id,
+                TopPlayer = e.top.Id,
+                Units = e.units
             }.PacketToNetOutgoingMessage(message2);
 
             server.SendMessage(message, e.bottom.Connection, NetDeliveryMethod.ReliableOrdered);
@@ -78,13 +79,13 @@ namespace Server.Game {
 
         private void SendSimulationUnitDiedPacket(SimulationUnitDied e) {
             NetOutgoingMessage message = server.CreateMessage();
-            new SimulationUnitDiedPacket() {
-                Unit = e.unit
+            new UnitDiedPacket() {
+                Location = new BoardLocation() { coords = e.unit }
             }.PacketToNetOutgoingMessage(message);
 
             NetOutgoingMessage message2 = server.CreateMessage();
-            new SimulationUnitDiedPacket() {
-                Unit = e.unit
+            new UnitDiedPacket() {
+                Location = new BoardLocation() { coords = e.unit }
             }.PacketToNetOutgoingMessage(message2);
 
             server.SendMessage(message, e.connections.First(), NetDeliveryMethod.ReliableOrdered);
@@ -93,10 +94,10 @@ namespace Server.Game {
 
         private void SendSimulationVictoryPacket(SimulationEndedInVictory e) {
             NetOutgoingMessage message = server.CreateMessage();
-            new SimulationEndedInVictoryPacket().PacketToNetOutgoingMessage(message);
+            new CombatEndedInVictoryPacket().PacketToNetOutgoingMessage(message);
 
             NetOutgoingMessage message2 = server.CreateMessage();
-            new SimulationEndedInLossPacket().PacketToNetOutgoingMessage(message2);
+            new CombatEndedInLossPacket().PacketToNetOutgoingMessage(message2);
 
             server.SendMessage(message, e.winner, NetDeliveryMethod.ReliableOrdered);
             server.SendMessage(message2, e.loser, NetDeliveryMethod.ReliableOrdered);
@@ -104,12 +105,12 @@ namespace Server.Game {
 
         private void SendSimulationDrawPacket(SimulationEndedInDraw e) {
             NetOutgoingMessage message = server.CreateMessage();
-            new SimulationEndedInDrawPacket() {
+            new CombatEndedInDrawPacket() {
                 Damage = e.participant1Damage
             }.PacketToNetOutgoingMessage(message);
 
             NetOutgoingMessage message2 = server.CreateMessage();
-            new SimulationEndedInDrawPacket() {
+            new CombatEndedInDrawPacket() {
                 Damage = e.participant2Damage
             }.PacketToNetOutgoingMessage(message2);
 
@@ -120,7 +121,7 @@ namespace Server.Game {
         private void SendPlayerDiedPacket(PlayerDied e) {
             NetOutgoingMessage message = server.CreateMessage();
             new PlayerDiedPacket() {
-                Who = e.who
+                Player = e.who
             }.PacketToNetOutgoingMessage(message);
 
             server.SendToAll(message, NetDeliveryMethod.ReliableOrdered);

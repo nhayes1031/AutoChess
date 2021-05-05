@@ -11,9 +11,9 @@ namespace Server.Game {
         public int Level { get; set; }
         public int Gold { get; set; }
         public int XP { get; set; }
-        public FixedSizeList<CharacterData> Bench { get; set; }
-        public Dictionary<HexCoords, CharacterData> Board { get; set; }
-        public FixedSizeList<CharacterData> Shop { get; set; }
+        public FixedSizeList<StarEntity> Bench { get; set; }
+        public Dictionary<HexCoords, StarEntity> Board { get; set; }
+        public Breed[] Shop { get; set; }
         
         public GhostPlayerData(IPlayer playerData) {
             Id = playerData.Id;

@@ -6,7 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data\characters.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\characters.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Lidgren.Network" Version="1.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="PubSub" Version="4.0.1" />
   </ItemGroup>
 

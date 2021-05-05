@@ -28,13 +28,10 @@ namespace Server.Game {
 
             hub.Subscribe<PurchaseRerollRequested>(this, PurchaseReroll);
             hub.Subscribe<PurchaseUnitRequested>(this, PurchaseUnit);
-            hub.Subscribe<MoveToBoardFromBenchRequested>(this, MoveToBoardFromBench);
-            hub.Subscribe<MoveToBenchFromBoardRequested>(this, MoveToBenchFromBoard);
-            hub.Subscribe<RepositionOnBoardRequested>(this, RepositionOnBoard);
-            hub.Subscribe<RepositionOnBenchRequested>(this, RepositionOnBench);
-            hub.Subscribe<SellUnitFromBenchRequested>(this, SellUnitFromBench);
-            hub.Subscribe<SellUnitFromBoardRequested>(this, SellUnitFromBoard);
+            hub.Subscribe<MoveUnitRequested>(this, MoveUnit);
             hub.Subscribe<PurchaseXPRequested>(this, PurchaseXP);
+            hub.Subscribe<UnitPurchased>(this, UnitPurchased);
+            hub.Subscribe<UnitLeveledUp>(this, UnitLeveledUp);
 
             state = GameState.Idle;
 
@@ -81,7 +78,7 @@ namespace Server.Game {
 
             var status = playerData.PayForReroll();
             if (status) {
-                var newShop = shop.RequestReroll(playerData);
+                var newShop = shop.RequestReroll(playerData.Level, playerData.Shop);
                 playerData.UpdateShop(newShop);
             }
             SendUpdatePlayerInfoPacket(e.client, playerData);
@@ -92,10 +89,7 @@ namespace Server.Game {
             if (!playerData.IsAlive)
                 return;
 
-            var status = playerData.Purchase(e.packet.Name);
-            if (status) {
-                SendPurchaseUnitPacket(e.client, e.packet.Name);
-            }
+            playerData.Purchase(e.packet.ShopIndex);
         }
 
         private void PurchaseXP(PurchaseXPRequested e) {
@@ -107,99 +101,33 @@ namespace Server.Game {
             SendUpdatePlayerInfoPacket(e.client, playerData);
         }
 
-        private void MoveToBenchFromBoard(MoveToBenchFromBoardRequested e) {
+        private void MoveUnit(MoveUnitRequested e) {
             var playerData = playerDatas[e.client];
             if (!playerData.IsAlive)
                 return;
 
             var status = playerData.MoveUnit(
-                CharacterFactory.CreateFromName(e.packet.Character), 
-                e.packet.FromCoords, 
-                e.packet.ToSeat
+                e.packet.Name,
+                e.packet.From,
+                e.packet.To
             );
 
             if (status) {
-                SendUpdatePlayerInfoPacket(e.client, playerDatas[e.client]);
+                SendUnitMovedPacket(e.client, e.packet);
             }
         }
 
-        private void RepositionOnBoard(RepositionOnBoardRequested e) {
-            var playerData = playerDatas[e.client];
-            if (!playerData.IsAlive)
-                return;
-
-            var status = playerData.MoveUnit(
-                CharacterFactory.CreateFromName(e.packet.Character), 
-                e.packet.FromCoords, 
-                e.packet.ToCoords
-            );
-
-            if (status) {
-                SendUpdatePlayerInfoPacket(e.client, playerDatas[e.client]);
-            }
-        }
-
-        private void MoveToBoardFromBench(MoveToBoardFromBenchRequested e) {
-            var playerData = playerDatas[e.client];
-            if (!playerData.IsAlive)
-                return;
-
-            var status = playerData.MoveUnit(
-                CharacterFactory.CreateFromName(e.packet.Character), 
-                e.packet.FromSeat, 
-                e.packet.ToCoords
-            );
-            if (status) {
-                // This is temporary
-                SendMoveToBenchFromBoardPacket(e.client, e.packet);
-                // SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
-            }
-        }
-
-        private void RepositionOnBench(RepositionOnBenchRequested e) {
-            var playerData = playerDatas[e.client];
-            if (!playerData.IsAlive)
-                return;
-
-            var status = playerData.MoveUnit(
-                CharacterFactory.CreateFromName(e.packet.Character), 
-                e.packet.FromSeat, 
-                e.packet.ToSeat
-            );
-            if (status) {
-                SendUpdatePlayerInfoPacket(e.client, playerDatas[e.client]);
-            }
-        }
-
-        private void SellUnitFromBench(SellUnitFromBenchRequested e) {
+        private void SellUnit(SellUnitRequested e) {
             var playerData = playerDatas[e.client];
             if (!playerData.IsAlive)
                 return;
 
             var status = playerData.SellUnit(
-                CharacterFactory.CreateFromName(e.packet.Name),
-                e.packet.Seat
+                e.packet.Name,
+                e.packet.Location
             );
             if (status) {
-                // This is temporary. This will be changed when the board is added to the client
-                SendSellUnitFromBenchPacket(e.client, e.packet);
-                // SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
-            }
-        }
-
-        private void SellUnitFromBoard(SellUnitFromBoardRequested e) {
-            var playerData = playerDatas[e.client];
-            if (!playerData.IsAlive)
-                return;
-
-            var status = playerData.SellUnit(
-                CharacterFactory.CreateFromName(e.packet.Name),
-                e.packet.Coords
-            );
-            if (status) {
-                // This is temporary.
-                SendSellUnitFromBoardPacket(e.client, e.packet);
-                // SendUpdatePlayerInfoPacket(connection, playerDatas[connection]);
+                SendSellUnitPacket(e.client, e.packet);
             }
         }
 
@@ -233,39 +161,38 @@ namespace Server.Game {
         #endregion
 
         #region Messages
-        // This is temporary
-        private void SendMoveToBenchFromBoardPacket(NetConnection connection, MoveToBoardFromBenchPacket packet) {
+        private void SendUnitMovedPacket(NetConnection connection, RequestMoveUnitPacket packet) {
             NetOutgoingMessage message = server.CreateMessage();
-            packet.PacketToNetOutgoingMessage(message);
+            new UnitRepositionedPacket() {
+                Name = packet.Name,
+                FromLocation = packet.From,
+                ToLocation = packet.To
+            }.PacketToNetOutgoingMessage(message);
             server.SendMessage(message, connection, NetDeliveryMethod.ReliableOrdered);
         }
 
-        // This is temporary. Clients should always be updated with the playerInfoPacket.
+        // Clients should always be updated with the playerInfoPacket.
         // This will be changed when the board is added to the client.
-        private void SendSellUnitFromBenchPacket(NetConnection connection, SellUnitFromBenchPacket packet) {
+        private void SendSellUnitPacket(NetConnection connection, RequestUnitSellPacket packet) {
             NetOutgoingMessage message = server.CreateMessage();
-            packet.PacketToNetOutgoingMessage(message);
-            server.SendMessage(message, connection, NetDeliveryMethod.ReliableOrdered);
-        }
-
-        // This is temporary
-        private void SendSellUnitFromBoardPacket(NetConnection connection, SellUnitFromBoardPacket packet) {
-            NetOutgoingMessage message = server.CreateMessage();
-            packet.PacketToNetOutgoingMessage(message);
+            new UnitSoldPacket() {
+                Name = packet.Name,
+                Location = packet.Location
+            }.PacketToNetOutgoingMessage(message);
             server.SendMessage(message, connection, NetDeliveryMethod.ReliableOrdered);
         }
 
         private void SendInitialGameSetupPacket() {
             NetOutgoingMessage message = server.CreateMessage();
             new InitialGameSetupPacket() {
-                PlayerPorts = playerDatas.Keys.Select( x => x.RemoteEndPoint.Port )
+                PlayerPorts = playerDatas.Keys.Select( x => x.RemoteEndPoint.Port ).ToList()
             }.PacketToNetOutgoingMessage(message);
             server.SendToAll(message, NetDeliveryMethod.ReliableOrdered);
         }
 
         private void SendTransitionPacketToAllUsers() {
             NetOutgoingMessage message = server.CreateMessage();
-            new TransitionUpdatePacket() {
+            new StateTransitionPacket() {
                 Event = timeline.CurrentEvent.ToString()
             }.PacketToNetOutgoingMessage(message);
             server.SendToAll(message, NetDeliveryMethod.ReliableOrdered);
@@ -273,7 +200,7 @@ namespace Server.Game {
 
         private void UpdateAllPlayerInfos() {
             foreach (var entry in playerDatas) {
-                var newShop = shop.RequestReroll(entry.Value);
+                var newShop = shop.RequestReroll(entry.Value.Level, entry.Value.Shop);
                 entry.Value.UpdateShop(newShop);
                 SendUpdatePlayerInfoPacket(entry.Key, entry.Value);
             }
@@ -282,7 +209,7 @@ namespace Server.Game {
         private void UpdateAllPlayerInfosWithRewards() {
             foreach (var entry in playerDatas) {
                 var reward = RewardSystem.GetRewardsFor(entry.Value);
-                var newShop = shop.RequestReroll(entry.Value);
+                var newShop = shop.RequestReroll(entry.Value.Level, entry.Value.Shop);
                 entry.Value.AddReward(reward);
                 entry.Value.UpdateShop(newShop);
                 SendUpdatePlayerInfoPacket(entry.Key, entry.Value);
@@ -291,9 +218,9 @@ namespace Server.Game {
 
         private void SendUpdatePlayerInfoPacket(NetConnection connection, PlayerData playerData) {
             NetOutgoingMessage message = server.CreateMessage();
-            new UpdatePlayerInfoPacket() {
+            new UpdatePlayerPacket() {
                 Level = playerData.Level,
-                Shop = playerData.GetShopAsStringArray(),
+                Shop = playerData.GetShopAsStringArray().ToList(),
                 XP = playerData.XP,
                 Gold = playerData.Gold,
                 Health = playerData.Health
@@ -301,12 +228,31 @@ namespace Server.Game {
             server.SendMessage(message, connection, NetDeliveryMethod.ReliableOrdered);
         }
 
-        private void SendPurchaseUnitPacket(NetConnection connection, string name) {
+        private void SendPurchaseUnitPacket(NetConnection connection, int shopIndex) {
             NetOutgoingMessage message = server.CreateMessage();
-            new PurchaseUnitPacket() {
-                Name = name
+            new UnitPurchasedPacket() {
+                ShopIndex = shopIndex
             }.PacketToNetOutgoingMessage(message);
             server.SendMessage(message, connection, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        private void UnitPurchased(UnitPurchased e) {
+            NetOutgoingMessage message = server.CreateMessage();
+            new UnitPurchasedPacket() {
+                ShopIndex = e.shopIndex
+            }.PacketToNetOutgoingMessage(message);
+            server.SendMessage(message, e.connection, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        private void UnitLeveledUp(UnitLeveledUp e) {
+            NetOutgoingMessage message = server.CreateMessage();
+            new UnitLeveledUpPacket() {
+                UnitsToRemove = e.units,
+                Name = e.name,
+                Location = e.location,
+                StarLevel = e.starLevel
+            }.PacketToNetOutgoingMessage(message);
+            server.SendMessage(message, e.connection, NetDeliveryMethod.ReliableOrdered);
         }
         #endregion
 

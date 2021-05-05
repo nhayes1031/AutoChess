@@ -22,7 +22,7 @@ namespace Server.Game {
                 byte type = message.ReadByte();
                 switch (message.MessageType) {
                     case NetIncomingMessageType.ConnectionApproval:
-                        if (type == (byte)PacketTypes.Connect) {
+                        if (type == (byte)IncomingPacketTypes.Connect) {
                             Logger.Info("Player " + message.SenderEndPoint + " connected to game server");
                             message.SenderConnection.Approve();
 
@@ -39,69 +39,39 @@ namespace Server.Game {
                         }
                         break;
                     case NetIncomingMessageType.Data:
-                        Packet packet;
+                        IIncomingPacket packet;
                         switch (type) {
-                            case ((byte)PacketTypes.PurchaseReroll):
+                            case ((byte)IncomingPacketTypes.RequestReroll):
                                 Logger.Info("Reroll was purchased by " + message.SenderConnection);
-                                packet = new PurchaseRerollPacket();
+                                packet = new RequestRerollPacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 hub.Publish(new PurchaseRerollRequested() { client = message.SenderConnection });
                                 break;
-                            case ((byte)PacketTypes.PurchaseXP):
+                            case ((byte)IncomingPacketTypes.RequestXPPurchase):
                                 Logger.Info("XP was purchased by " + message.SenderConnection);
-                                packet = new PurchaseXPPacket();
+                                packet = new RequestXPPurchasePacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 hub.Publish(new PurchaseXPRequested() { client = message.SenderConnection });
                                 break;
-                            case ((byte)PacketTypes.PurchaseUnit):
+                            case ((byte)IncomingPacketTypes.RequestUnitPurchase):
                                 Logger.Info("Unit purchase requested by " + message.SenderConnection);
-                                packet = new PurchaseUnitPacket();
+                                packet = new RequestUnitPurchasePacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                hub.Publish(new PurchaseUnitRequested() { client = message.SenderConnection, packet = (PurchaseUnitPacket)packet });
+                                hub.Publish(new PurchaseUnitRequested() { client = message.SenderConnection, packet = (RequestUnitPurchasePacket)packet });
                                 break;
-                            case ((byte)PacketTypes.MoveToBenchFromBoard):
+                            case ((byte)IncomingPacketTypes.RequestMoveUnit):
                                 if (isAllowedToProcessMessages) {
                                     Logger.Info(message.SenderConnection + " tried to move a unit to the bench from the board");
-                                    packet = new MoveToBenchFromBoardPacket();
+                                    packet = new RequestMoveUnitPacket();
                                     packet.NetIncomingMessageToPacket(message);
-                                    hub.Publish(new MoveToBenchFromBoardRequested() { client = message.SenderConnection, packet = (MoveToBenchFromBoardPacket)packet });
+                                    hub.Publish(new MoveUnitRequested() { client = message.SenderConnection, packet = (RequestMoveUnitPacket)packet });
                                 }
                                 break;
-                            case ((byte)PacketTypes.MoveToBoardFromBench):
-                                if (isAllowedToProcessMessages) {
-                                    Logger.Info(message.SenderConnection + " tried to move a unit to the board from bench");
-                                    packet = new MoveToBoardFromBenchPacket();
-                                    packet.NetIncomingMessageToPacket(message);
-                                    hub.Publish(new MoveToBoardFromBenchRequested() { client = message.SenderConnection, packet = (MoveToBoardFromBenchPacket)packet });
-                                }
-                                break;
-                            case ((byte)PacketTypes.RepositionOnBoard):
-                                if (isAllowedToProcessMessages) {
-                                    Logger.Info(message.SenderConnection + " tried to reposition a unit on the board");
-                                    packet = new RepositionOnBoardPacket();
-                                    packet.NetIncomingMessageToPacket(message);
-                                    hub.Publish(new RepositionOnBoardRequested() { client = message.SenderConnection, packet = (RepositionOnBoardPacket)packet });
-                                }
-                                break;
-                            case ((byte)PacketTypes.RepositionOnBench):
-                                Logger.Info(message.SenderConnection + " tried to reposition a unit on their bench");
-                                packet = new RepositionOnBenchPacket();
-                                packet.NetIncomingMessageToPacket(message);
-                                hub.Publish(new RepositionOnBenchRequested() { client = message.SenderConnection, packet = (RepositionOnBenchPacket)packet });
-                                break;
-                            case ((byte)PacketTypes.SellUnitFromBench):
+                            case ((byte)IncomingPacketTypes.RequestUnitSell):
                                 Logger.Info(message.SenderConnection + " tried to sell a unit from their bench");
-                                packet = new SellUnitFromBenchPacket();
+                                packet = new RequestUnitSellPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                hub.Publish(new SellUnitFromBenchRequested() { client = message.SenderConnection, packet = (SellUnitFromBenchPacket)packet });
-                                break;
-                            case ((byte)PacketTypes.SellUnitFromBoard):
-                                if (isAllowedToProcessMessages) {
-                                    Logger.Info(message.SenderConnection + " tried to sell a unit from their board");
-                                    packet = new SellUnitFromBoardPacket();
-                                    packet.NetIncomingMessageToPacket(message);
-                                    hub.Publish(new SellUnitFromBoardRequested() { client = message.SenderConnection, packet = (SellUnitFromBoardPacket)packet });
-                                }
+                                hub.Publish(new SellUnitRequested() { client = message.SenderConnection, packet = (RequestUnitSellPacket)packet });
                                 break;
                             default:
                                 Logger.Error("Unhandled date / packet type: " + type);

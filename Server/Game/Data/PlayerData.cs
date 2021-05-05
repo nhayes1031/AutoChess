@@ -30,9 +30,9 @@ namespace Server.Game {
         public int Level { get; set; }
         public int Gold { get; set; }
         public int XP { get; set; }
-        public FixedSizeList<CharacterData> Bench { get; set; }
-        public Dictionary<HexCoords, CharacterData> Board { get; set; }
-        public FixedSizeList<CharacterData> Shop { get; set; }
+        public FixedSizeList<StarEntity> Bench { get; set; }
+        public Dictionary<HexCoords, StarEntity> Board { get; set; }
+        public Breed[] Shop { get; set; }
 
         public bool IsAlive => Health > 0;
 
@@ -44,9 +44,9 @@ namespace Server.Game {
             Gold = 0;
             XP = 0;
 
-            Shop = new FixedSizeList<CharacterData>(5);
-            Bench = new FixedSizeList<CharacterData>(10);
-            Board = new Dictionary<HexCoords, CharacterData>();
+            Shop = new Breed[5];
+            Bench = new FixedSizeList<StarEntity>(10);
+            Board = new Dictionary<HexCoords, StarEntity>();
 
             PlayerCreated?.Invoke(this);
         }
@@ -56,17 +56,16 @@ namespace Server.Game {
             XP += reward.XP;
         }
 
-        public void UpdateShop(CharacterData[] newShop) {
+        public void UpdateShop(Breed[] newShop) {
             if (newShop.Length == 5) {
-                Shop.Clear();
-                Shop.AddRange(newShop);
+                Shop = newShop;
             } else {
                 Logger.Error("Tried to assign a new shop that did not contain 5 elements.");
             }
         }
 
         public IEnumerable<string> GetShopAsStringArray() {
-            return Shop.List.Select(x => {
+            return Shop.Select(x => {
                 if (!(x is null)) {
                     return x.Name;
                 }
@@ -74,27 +73,86 @@ namespace Server.Game {
             });
         }
 
-        public bool Purchase(string name) {
-            var character = CharacterFactory.CreateFromName(name);
-            if (!(character is null)) {
-                if (Shop.Contains(character)) {
-                    if (Gold >= 0) {
-                        Gold -= 0;
-                        
-                        Shop.Remove(character);
-                        Bench.Add(character);
-                        
-                        return true;
-                    } else {
-                        Logger.Error("Someone tried to request a character that they didn't have enough gold for!");
-                    }
+        public void Purchase(int shopIndex) {
+            if (shopIndex >= 0 && shopIndex < 5) {
+                if (Gold >= 0) {
+                    Gold -= 0;
+
+                    var character = Shop[shopIndex];
+                    Shop[shopIndex] = null;
+                    var starEntity = new StarEntity(character);
+                    Bench.Add(starEntity);
+                    Hub.Default.Publish(new UnitPurchased {
+                        connection = Connection,
+                        shopIndex = shopIndex
+                    });
+                    TryCombineUnits(starEntity);
                 } else {
-                    Logger.Error("Someone tried to request a character that wasn't in their shop!");
+                    Logger.Error("Someone tried to request a character that they didn't have enough gold for!");
                 }
             } else {
-                Logger.Error("Someone tried to request a character that didn't exist!");
+                Logger.Error("Someone tried to request a character that wasn't in their shop!");
             }
-            return false;
+        }
+
+        private StarEntity TryCombineUnits(StarEntity original) {
+            var twoStar = CombineUnits(original);
+            if (!(twoStar is null)) {
+                var threeStar = CombineUnits(twoStar);
+                if (!(threeStar is null)) {
+                    return threeStar;
+                }
+                return twoStar;
+            }
+            return original;
+        }
+
+        private StarEntity CombineUnits(StarEntity entity) {
+            var combineLocation = 0;
+            var units = new List<Tuple<string, ILocation>>();
+            for (int i = Bench.List.Length - 1; i < 0; i--) {
+                var unit = Bench.List[i];
+                if (unit == entity) {
+                    combineLocation = i;
+                    units.Add(new Tuple<string, ILocation>(
+                        unit.Name,
+                        new BenchLocation() {
+                            seat = i
+                        }
+                    ));
+                }
+            }
+
+            foreach (var entry in Board) {
+                if (entry.Value == entity) {
+                    units.Add(new Tuple<string, ILocation>(
+                        entry.Value.Name,
+                        new BoardLocation() {
+                            coords = entry.Key
+                        }
+                    ));
+                }
+            }
+
+            if (units.Count >= 2) {
+                foreach (var item in units) {
+                    if (item.Item2 is BenchLocation benchLocation) {
+                        Bench.RemoveAt(benchLocation.seat);
+                    }
+                    else if (item.Item2 is BoardLocation boardLocation) {
+                        Board.Remove(boardLocation.coords);
+                    }
+                }
+                entity.LevelUp();
+                Hub.Default.Publish(new UnitLeveledUp {
+                    connection = Connection,
+                    units = units,
+                    name = entity.Name,
+                    location = new BenchLocation() { seat = combineLocation },
+                    starLevel = entity.StarLevel
+                });
+            }
+            return entity;
         }
 
         public void PurchaseXP() {
@@ -122,81 +180,112 @@ namespace Server.Game {
             return false;
         }
 
-        public bool SellUnit(CharacterData character, HexCoords coords) {
-            if (!AllowedCoordinates.Contains(coords))
+        public bool SellUnit(string character, ILocation location) {
+            if (location is BenchLocation benchLocation) {
+                SellUnit(character, benchLocation);
+            } else if (location is BoardLocation boardLocation) {
+                SellUnit(character, boardLocation);
+            }
+            return false;
+        }
+
+        private bool SellUnit(string character, BoardLocation location) {
+            if (!AllowedCoordinates.Contains(location.coords))
                 return false;
 
-            var unit = Board[coords];
+            var unit = Board[location.coords];
             if (!(unit is null)) {
-                Board.Remove(coords);
-                Gold += character.Cost;
+                var cost = unit.Cost;
+                Board.Remove(location.coords);
+                Gold += cost;
                 return true;
             }
             return false;
         }
 
-        public bool SellUnit(CharacterData character, int seat) {
-            if (seat < Bench.Size && (Bench.List[seat] is null)) {
-                Bench.List[seat] = null;
-                Gold += character.Cost;
-                return true;
+        private bool SellUnit(string character, BenchLocation location) {
+            if (location.seat < Bench.Size && location.seat >= 0) {
+                var unit = Bench.List[location.seat];
+                if (!(unit is null) && unit.Name == character) {
+                    var cost = unit.Cost;
+                    Bench.List[location.seat] = null;
+                    Gold += cost;
+                    return true;
+                }
             }
             return false;
         }
 
-        public bool MoveUnit(CharacterData character, HexCoords fromCoords, int toSeat) {
-            if (!AllowedCoordinates.Contains(fromCoords))
+        public bool MoveUnit(string character, ILocation from, ILocation to) {
+            if (from is BoardLocation fromBoardLocation) {
+                if (to is BoardLocation toBoardLocation) {
+                    return MoveUnit(character, fromBoardLocation, toBoardLocation);
+                } else if (to is BenchLocation toBenchLocation) {
+                    return MoveUnit(character, fromBoardLocation, toBenchLocation);
+                }
+            } else if (from is BenchLocation fromBenchLocation) {
+                if (to is BoardLocation toBoardLocation) {
+                    return MoveUnit(character, fromBenchLocation, toBoardLocation);
+                } else if (to is BenchLocation toBenchLocation) {
+                    return MoveUnit(character, fromBenchLocation, toBenchLocation);
+                }
+            }
+            return false;
+        }
+
+        private bool MoveUnit(string character, BoardLocation from, BenchLocation to) {
+            if (!AllowedCoordinates.Contains(from.coords))
                 return false;
 
-            var unit = Board[fromCoords];
+            var unit = Board[from.coords];
             if (!(unit is null) 
-                && Bench.Size < toSeat && Bench.List[toSeat] is null
+                && Bench.Size < to.seat && Bench.List[to.seat] is null
             ) {
-                Bench.List[toSeat] = unit;
-                Board.Remove(fromCoords);
+                Bench.List[to.seat] = unit;
+                Board.Remove(from.coords);
                 return true;
             }
             return false;
         }
 
-        public bool MoveUnit(CharacterData character, HexCoords fromCoords, HexCoords toCoords) {
-            if (!AllowedCoordinates.Contains(fromCoords)
-                && !AllowedCoordinates.Contains(toCoords)   
+        private bool MoveUnit(string character, BoardLocation from, BoardLocation to) {
+            if (!AllowedCoordinates.Contains(from.coords)
+                && !AllowedCoordinates.Contains(to.coords)   
             )
                 return false;
 
-            var unit = Board[fromCoords];
+            var unit = Board[from.coords];
             if (!(unit is null)
-                && AllowedCoordinates.Contains(toCoords) && !Board.ContainsKey(toCoords)
+                && AllowedCoordinates.Contains(to.coords) && !Board.ContainsKey(to.coords)
             ) {
-                Board[toCoords] = unit;
-                Board.Remove(fromCoords);
+                Board[to.coords] = unit;
+                Board.Remove(from.coords);
                 return true;
             }
             return false;
         }
 
-        public bool MoveUnit(CharacterData character, int fromSeat, HexCoords toCoords) {
-            if (!AllowedCoordinates.Contains(toCoords))
+        private bool MoveUnit(string character, BenchLocation from, BoardLocation to) {
+            if (!AllowedCoordinates.Contains(to.coords))
                 return false;
 
-            if (fromSeat >= 0 && fromSeat < Bench.List.Length && Bench.List[fromSeat] == character
-                && AllowedCoordinates.Contains(toCoords) && !Board.ContainsKey(toCoords)
+            if (from.seat >= 0 && from.seat < Bench.List.Length && Bench.List[from.seat].Name == character
+                && AllowedCoordinates.Contains(to.coords) && !Board.ContainsKey(to.coords)
             ) {
-                var unit = Bench.List[fromSeat];
-                Bench.List[fromSeat] = null;
-                Board[toCoords] = unit;
+                var unit = Bench.List[from.seat];
+                Bench.List[from.seat] = null;
+                Board[to.coords] = unit;
                 return true;
             }
             return false;
         }
 
-        public bool MoveUnit(CharacterData character, int fromSeat, int toSeat) {
-            if (Bench.List.Length < fromSeat && Bench.List.Length < toSeat
-                && Bench.List[fromSeat] == character && Bench.List[toSeat] is null
+        private bool MoveUnit(string character, BenchLocation from, BenchLocation to) {
+            if (Bench.List.Length < from.seat && Bench.List.Length < to.seat
+                && Bench.List[from.seat].Name == character && Bench.List[to.seat] is null
             ) {
-                Bench.List[toSeat] = Bench.List[fromSeat];
-                Bench.List[fromSeat] = null;
+                Bench.List[to.seat] = Bench.List[from.seat];
+                Bench.List[from.seat] = null;
                 return true;
             }
             return false;

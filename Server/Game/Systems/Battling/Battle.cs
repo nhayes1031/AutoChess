@@ -37,7 +37,12 @@ namespace Server.Game.Systems {
             Hub.Default.Publish(new SimulationCombatStarted() {
                 bottom = player1,
                 top = player2,
-                units = battlefield.GetUnits()
+                units = battlefield.GetUnits().Select(
+                    x => new Tuple<string, BoardLocation>(
+                        x.GetComponent<StatsComponent>().Name,
+                        new BoardLocation() { coords = x.GetComponent<MovementComponent>().position.coords }
+                    )
+                ).ToList()
             });
 
             simulation = new Simulation(battlefield);

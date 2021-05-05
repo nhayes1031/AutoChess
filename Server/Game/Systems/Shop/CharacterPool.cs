@@ -1,14 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Server.Game.Systems {
-
-    /// <summary>
-    /// TODO:
-    /// Should contain all characters in the match
-    /// As characters are purchases they should be removed from the pool
-    /// There should be a weight pull option based on level
-    /// </summary>
     public class CharacterPool {
         private readonly PullChance[] pullChanceBreakdown = new PullChance[]{
             new PullChance(0, 0, 0, 0, 0),      // Level 0
@@ -24,124 +19,94 @@ namespace Server.Game.Systems {
             new PullChance(10, 15, 25, 30, 20), // Level 10
         };
 
-        private readonly Type[] Tier1Characters = new Type[] {
-                typeof(Mage),
-                typeof(Warrior),
-                typeof(Priest),
-                typeof(Hunter),
-                typeof(Paladin),
-                typeof(Rogue),
-                typeof(Fighter),
-                typeof(Ranger),
-                typeof(Cleric),
-                typeof(Bard),
-                typeof(Summoner),
-                typeof(Tank),
-                typeof(Bladecaller)
-        };
-        private readonly Type[] Tier2Characters = new Type[] {
-                typeof(Cultist),
-                typeof(Assassin),
-                typeof(Druid),
-                typeof(Healer),
-                typeof(Beastmaster),
-                typeof(Wizard),
-                typeof(Sorcerer),
-                typeof(Berserker),
-                typeof(Knight),
-                typeof(Archon),
-                typeof(Herald),
-                typeof(Pirate),
-                typeof(Necromancer)
-        };
-        private readonly Type[] Tier3Characters = new Type[] {
-                typeof(Enchanter),
-                typeof(Sage),
-                typeof(Warlock),
-                typeof(Monk),
-                typeof(Templar),
-                typeof(Sentinel),
-                typeof(Battlemage),
-                typeof(Protector),
-                typeof(Mystic),
-                typeof(Elementalist),
-                typeof(Conjurer),
-                typeof(Arbiter),
-                typeof(Shaman)
-        };
-        private readonly Type[] Tier4Characters = new Type[] {
-                typeof(Seer),
-                typeof(Revenant),
-                typeof(Trickster),
-                typeof(Provoker),
-                typeof(Keeper),
-                typeof(Invoker),
-                typeof(Wanderer),
-                typeof(Siren),
-                typeof(Crusader),
-                typeof(Reaper),
-                typeof(Broodwarden)
-        };
-        private readonly Type[] Tier5Characters = new Type[] {
-                typeof(Dreadnought),
-                typeof(Stalker),
-                typeof(Illusionist),
-                typeof(Strider),
-                typeof(Betrayer),
-                typeof(Naturalist),
-                typeof(Charlatan),
-                typeof(Vindicator)
-        };
-
         private readonly PoolTier Tier1;
         private readonly PoolTier Tier2;
         private readonly PoolTier Tier3;
         private readonly PoolTier Tier4;
         private readonly PoolTier Tier5;
 
-        private Random rnd;
+        private readonly Random rnd;
 
         public CharacterPool() {
-            Tier1 = new PoolTier(45, Tier1Characters);
-            Tier2 = new PoolTier(30, Tier2Characters);
-            Tier3 = new PoolTier(25, Tier3Characters);
-            Tier4 = new PoolTier(15, Tier4Characters);
-            Tier5 = new PoolTier(10, Tier5Characters);
+            var characters = new Dictionary<int, List<Breed>>();
+            GetCharacters().ForEach(c => characters[c.Cost].Add(c));
+
+            Tier1 = new PoolTier(45, characters[1]);
+            Tier2 = new PoolTier(30, characters[2]);
+            Tier3 = new PoolTier(25, characters[3]);
+            Tier4 = new PoolTier(15, characters[4]);
+            Tier5 = new PoolTier(10, characters[5]);
 
             rnd = new Random();
         }
 
-        public CharacterData GetCharacter(int level) {
+        private static List<Breed> GetCharacters() {
+            return JsonConvert.DeserializeObject<List<Breed>>(File.ReadAllText(@"./characters.json"));
+        }
+
+        public Breed[] Pop(int amount, int playerLevel) {
+            var characters = new Breed[amount];
+            for (int i = 0; i < amount; i++) {
+                characters[i] = Pop(playerLevel);
+            }
+            return characters;
+        }
+
+        public void Push(Breed[] characters) {
+            foreach (var character in characters) {
+                if (!(character is null)) {
+                    switch(character.Cost) {
+                        case 1:
+                            Tier1.Push(character);
+                            break;
+                        case 2:
+                            Tier2.Push(character);
+                            break;
+                        case 3:
+                            Tier3.Push(character);
+                            break;
+                        case 4:
+                            Tier4.Push(character);
+                            break;
+                        case 5:
+                            Tier5.Push(character);
+                            break;
+                    }
+                }
+            }
+        }
+
+        private Breed Pop(int playerLevel) {
+            var pool = GetPool(playerLevel);
+            return pool.Pop();
+        }
+
+        private PoolTier GetPool(int playerLevel) {
             var roll = rnd.Next(0, 100);
-            var pullChance = pullChanceBreakdown[level];
+            var pullChance = pullChanceBreakdown[playerLevel];
 
             if (roll <= pullChance.Tier1Percentage) {
-                return PullCharacter(Tier1);
+                return Tier1;
             }
             roll -= pullChance.Tier1Percentage;
             if (roll <= pullChance.Tier2Percentage) {
-                return PullCharacter(Tier2);
+                return Tier2;
             }
             roll -= pullChance.Tier2Percentage;
             if (roll <= pullChance.Tier3Percentage) {
-                return PullCharacter(Tier3);
+                return Tier3;
             }
             roll -= pullChance.Tier3Percentage;
             if (roll <= pullChance.Tier4Percentage) {
-                return PullCharacter(Tier4);
+                return Tier4;
             }
             roll -= pullChance.Tier4Percentage;
             if (roll <= pullChance.Tier5Percentage) {
-                return PullCharacter(Tier5);
+                return Tier5;
             }
 
-            Logger.Error("Unabled to pull a character... Pull Chance Breakdown probably doesn't add up to 100");
+            Logger.Error("Unable to get pool... Pull Chance Breakdown probably doesn't add up to 100");
             return null;
-        }
-
-        private CharacterData PullCharacter(PoolTier pool) {
-            var roll = rnd.Next(0, pool.Length);
-            return pool.Pull(roll);
         }
 
         private class PullChance {
@@ -161,26 +126,29 @@ namespace Server.Game.Systems {
         }
 
         private class PoolTier {
-            private List<CharacterData> pool;
+            private List<Breed> pool;
+            private Random rnd;
 
-            public int Length => pool.Count;
-
-            public PoolTier(int occurrences, Type[] characters) {
-                pool = new List<CharacterData>();
+            public PoolTier(int occurrences, List<Breed> characters) {
+                rnd = new Random();
+                pool = new List<Breed>();
 
                 foreach (var character in characters) {
                     for (int i = 0; i < occurrences; i++) {
-                        pool.Add((CharacterData)Activator.CreateInstance(character));
+                        pool.Add(character.Clone());
                     }
                 }
             }
 
-            public CharacterData Pull(int index) {
-                return pool[index];
+            public Breed Pop() {
+                var index = rnd.Next(0, pool.Count - 1);
+                var character = pool[index];
+                pool.Remove(character);
+                return character;
             }
 
-            public bool Remove(CharacterData character) {
-                return pool.Remove(character);
+            public void Push(Breed character) {
+                pool.Add(character);
             }
         }
     }

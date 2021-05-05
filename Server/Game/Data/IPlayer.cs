@@ -11,8 +11,8 @@ namespace Server.Game {
         int Level { get; set; }
         int Gold { get; set; }
         int XP { get; set; }
-        FixedSizeList<CharacterData> Bench { get; set; }
-        Dictionary<HexCoords, CharacterData> Board { get; set; }
-        FixedSizeList<CharacterData> Shop { get; set; }
+        FixedSizeList<StarEntity> Bench { get; set; }
+        Dictionary<HexCoords, StarEntity> Board { get; set; }
+        Breed[] Shop { get; set; }
     }
 }

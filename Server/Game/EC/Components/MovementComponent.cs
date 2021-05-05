@@ -35,10 +35,9 @@ namespace Server.Game.EC.Components {
         }
 
         private void HandleTimerExpired() {
-            hub.Publish(new UnitMoved() {
-                fromCoords = position.coords,
-                toCoords = hexToMoveTo.coords,
-                entity = parent
+            hub.Publish(new UnitMovedPacket() {
+                FromCoords = new BoardLocation() { coords = position.coords },
+                ToCoords = new BoardLocation() { coords = hexToMoveTo.coords },
             });
 
             position.RemoveEntity();
