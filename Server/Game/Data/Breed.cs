@@ -8,7 +8,7 @@
         public int Armor { get; private set; }
         public int MagicResist { get; private set; }
         public int AttackDamage { get; private set; }
-        public int AttackSpeed { get; private set; }
+        public float AttackSpeed { get; private set; }
         public int CriticalStrikeChance { get; private set; }
         public int AttackRange { get; private set; }
         public int Movespeed { get; private set; }
@@ -22,7 +22,7 @@
             int armor, 
             int magicResist, 
             int attackDamage, 
-            int attackSpeed, 
+            float attackSpeed, 
             int criticalStrikeChance, 
             int attackRange, 
             int movespeed

@@ -10,7 +10,7 @@ namespace Client.UI {
             Manager.GameClient.TransitionUpdate += HandleTransitionUpdate;
             Manager.GameClient.UpdatePlayerInfo += HandleUpdatePlayerInfo;
             Manager.GameClient.UnitPurchased += HandleUnitPurchased;
-            Manager.GameClient.SimulationUnitMoved += HandleSimulationUnitMoved;
+            Manager.GameClient.UnitMoved += HandleUnitMoved;
 
             text.text = "";
         }
@@ -19,14 +19,14 @@ namespace Client.UI {
             Manager.GameClient.TransitionUpdate -= HandleTransitionUpdate;
             Manager.GameClient.UpdatePlayerInfo -= HandleUpdatePlayerInfo;
             Manager.GameClient.UnitPurchased -= HandleUnitPurchased;
-            Manager.GameClient.SimulationUnitMoved -= HandleSimulationUnitMoved;
+            Manager.GameClient.UnitMoved -= HandleUnitMoved;
         }
 
-        private void HandleTransitionUpdate(TransitionUpdatePacket packet) {
+        private void HandleTransitionUpdate(StateTransitionPacket packet) {
             text.text += packet.Event + "\n";
         }
 
-        private void HandleUpdatePlayerInfo(UpdatePlayerInfoPacket packet) {
+        private void HandleUpdatePlayerInfo(UpdatePlayerPacket packet) {
             text.text += "Player Shop: ";
             for (int i = 0; i < 5; i++) {
                 text.text += "\n" + packet.Shop[i];
@@ -38,8 +38,8 @@ namespace Client.UI {
             text.text += "Unit Purchased: " + name + "\n";
         }
 
-        private void HandleSimulationUnitMoved(SimulationUnitMovedPacket packet) {
-            text.text += $"Unit moved from {packet.FromCoords} to {packet.ToCoords}\n";
+        private void HandleUnitMoved(UnitMovedPacket packet) {
+            text.text += $"Unit moved from {packet.FromCoords.coords} to {packet.ToCoords.coords}\n";
         }
     }
 }

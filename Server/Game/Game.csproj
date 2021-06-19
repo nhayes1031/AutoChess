@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\characters.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Data\characters.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

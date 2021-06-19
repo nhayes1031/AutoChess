@@ -9,19 +9,18 @@ namespace Client.Game {
         public Action<bool> Connected;
         public Action<List<int>> Ports;
         public Action<string[]> ShopUpdate;
-        public Action<TransitionUpdatePacket> TransitionUpdate;
-        public Action<UpdatePlayerInfoPacket> UpdatePlayerInfo;
+        public Action<StateTransitionPacket> TransitionUpdate;
+        public Action<UpdatePlayerPacket> UpdatePlayerInfo;
         public Action<string> UnitPurchased;
-        public Action<SellUnitFromBenchPacket> UnitSoldFromBench;
-        public Action<SellUnitFromBoardPacket> UnitSoldFromBoard;
-        public Action<MoveToBoardFromBenchPacket> UnitMovedFromBenchToBoard;
-        public Action<SimulationUnitMovedPacket> SimulationUnitMoved;
-        public Action<SimulationUnitAttackedPacket> SimulationUnitAttacked;
-        public Action<SimulationCombatStartedPacket> SimulationCombatStarted;
-        public Action SimulationEndedInDraw;
-        public Action SimulationEndedInVictory;
-        public Action SimulationEndedInLoss;
-        public Action<SimulationUnitDiedPacket> SimulationUnitDied;
+        public Action<UnitSoldPacket> UnitSold;
+        public Action<UnitMovedPacket> UnitMoved;
+        public Action<UnitAttackedPacket> UnitAttacked;
+        public Action<UnitDiedPacket> UnitDied;
+        public Action<CombatStartedPacket> CombatStarted;
+        public Action<UnitRepositionedPacket> UnitRepositioned;
+        public Action CombatEndedInDraw;
+        public Action CombatEndedInVictory;
+        public Action CombatEndedInLoss;
         public Action<PlayerDiedPacket> PlayerDied;
         public Action<GameOverPacket> GameOver;
 
@@ -62,86 +61,81 @@ namespace Client.Game {
                     case NetIncomingMessageType.Data:
                         var packetType = (int)message.ReadByte();
 
-                        Packet packet;
+                        IIncomingPacket packet;
                         switch (packetType) {
-                            case (int)PacketTypes.InitialGameSetup:
+                            case (int)IncomingPacketTypes.InitialGameSetup:
                                 packet = new InitialGameSetupPacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 PlayerPorts = ((InitialGameSetupPacket)packet).PlayerPorts;
                                 Ports?.Invoke(PlayerPorts);
                                 break;
-                            case (int)PacketTypes.UpdatePlayerInfo:
-                                packet = new UpdatePlayerInfoPacket();
+                            case (int)IncomingPacketTypes.UpdatePlayer:
+                                packet = new UpdatePlayerPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                UpdatePlayerInfo?.Invoke((UpdatePlayerInfoPacket)packet);
-                                ShopUpdate?.Invoke(((UpdatePlayerInfoPacket)packet).Shop);
+                                UpdatePlayerInfo?.Invoke((UpdatePlayerPacket)packet);
+                                ShopUpdate?.Invoke(((UpdatePlayerPacket)packet).Shop.ToArray());
                                 break;
-                            case (int)PacketTypes.TransitionUpdate:
-                                packet = new TransitionUpdatePacket();
+                            case (int)IncomingPacketTypes.StateTransition:
+                                packet = new StateTransitionPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                TransitionUpdate?.Invoke((TransitionUpdatePacket)packet);
+                                TransitionUpdate?.Invoke((StateTransitionPacket)packet);
                                 break;
-                            case (int)PacketTypes.PurchaseUnit:
-                                packet = new PurchaseUnitPacket();
+                            case (int)IncomingPacketTypes.UnitPurchased:
+                                packet = new UnitPurchasedPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                UnitPurchased?.Invoke(((PurchaseUnitPacket)packet).Name);
+                                UnitPurchased?.Invoke(((UnitPurchasedPacket)packet).Name);
                                 break;
-                            case (int)PacketTypes.SellUnitFromBench:
-                                packet = new SellUnitFromBenchPacket();
+                            case (int)IncomingPacketTypes.UnitSold:
+                                packet = new UnitSoldPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                UnitSoldFromBench?.Invoke((SellUnitFromBenchPacket)packet);
+                                UnitSold?.Invoke((UnitSoldPacket)packet);
                                 break;
-                            case (int)PacketTypes.SellUnitFromBoard:
-                                packet = new SellUnitFromBoardPacket();
+                            case (int)IncomingPacketTypes.UnitRepositioned:
+                                packet = new UnitRepositionedPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                UnitSoldFromBoard?.Invoke((SellUnitFromBoardPacket)packet);
+                                UnitRepositioned?.Invoke((UnitRepositionedPacket)packet);
                                 break;
-                            case (int)PacketTypes.MoveToBoardFromBench:
-                                packet = new MoveToBoardFromBenchPacket();
+                            case (int)IncomingPacketTypes.UnitMoved:
+                                packet = new UnitMovedPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                UnitMovedFromBenchToBoard?.Invoke((MoveToBoardFromBenchPacket)packet);
+                                UnitMoved?.Invoke((UnitMovedPacket)packet);
                                 break;
-                            case (int)PacketTypes.SimulationUnitMoved:
-                                packet = new SimulationUnitMovedPacket();
+                            case (int)IncomingPacketTypes.UnitAttacked:
+                                packet = new UnitAttackedPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                SimulationUnitMoved?.Invoke((SimulationUnitMovedPacket)packet);
+                                UnitAttacked?.Invoke((UnitAttackedPacket)packet);
                                 break;
-                            case (int)PacketTypes.SimulationUnitAttacked:
-                                packet = new SimulationUnitAttackedPacket();
+                            case (int)IncomingPacketTypes.CombatStarted:
+                                packet = new CombatStartedPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                SimulationUnitAttacked?.Invoke((SimulationUnitAttackedPacket)packet);
+                                CombatStarted?.Invoke((CombatStartedPacket)packet);
                                 break;
-                            case (int)PacketTypes.SimulationCombatStarted:
-                                packet = new SimulationCombatStartedPacket();
+                            case (int)IncomingPacketTypes.CombatEndedInVictory:
+                                CombatEndedInVictory?.Invoke();
+                                break;
+                            case (int)IncomingPacketTypes.CombatEndedInLoss:
+                                CombatEndedInLoss?.Invoke();
+                                break;
+                            case (int)IncomingPacketTypes.CombatEndedInDraw:
+                                CombatEndedInDraw?.Invoke();
+                                break;
+                            case (int)IncomingPacketTypes.UnitDied:
+                                packet = new UnitDiedPacket();
                                 packet.NetIncomingMessageToPacket(message);
-                                SimulationCombatStarted?.Invoke((SimulationCombatStartedPacket)packet);
+                                UnitDied?.Invoke((UnitDiedPacket)packet);
                                 break;
-                            case (int)PacketTypes.SimulationEndedInVictory:
-                                SimulationEndedInVictory?.Invoke();
-                                break;
-                            case (int)PacketTypes.SimulationEndedInLoss:
-                                SimulationEndedInLoss?.Invoke();
-                                break;
-                            case (int)PacketTypes.SimulationEndedInDraw:
-                                SimulationEndedInDraw?.Invoke();
-                                break;
-                            case (int)PacketTypes.SimulationUnitDied:
-                                packet = new SimulationUnitDiedPacket();
-                                packet.NetIncomingMessageToPacket(message);
-                                SimulationUnitDied?.Invoke((SimulationUnitDiedPacket)packet);
-                                break;
-                            case (int)PacketTypes.Connect:
+                            case (int)IncomingPacketTypes.Connect:
                                 packet = new ConnectPacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 playerId = ((ConnectPacket)packet).playerId;
                                 break;
-                            case (int)PacketTypes.PlayerDied:
+                            case (int)IncomingPacketTypes.PlayerDied:
                                 packet = new PlayerDiedPacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 // TODO: Disable all packets that can be sent out when the player has died
                                 PlayerDied?.Invoke((PlayerDiedPacket)packet);
                                 break;
-                            case (int)PacketTypes.GameOver:
+                            case (int)IncomingPacketTypes.GameOver:
                                 packet = new GameOverPacket();
                                 packet.NetIncomingMessageToPacket(message);
                                 // TODO: Clean up the game server connection
@@ -201,48 +195,99 @@ namespace Client.Game {
 
         public void SendRerollRequest() {
             NetOutgoingMessage message = client.CreateMessage();
-            new PurchaseRerollPacket().PacketToNetOutgoingMessage(message);
+            new RequestRerollPacket().PacketToNetOutgoingMessage(message);
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }
 
-        public void Purchase(string name) {
+        public void Purchase(string name, int shopIndex) {
             NetOutgoingMessage message = client.CreateMessage();
-            new PurchaseUnitPacket() {
-                Name = name
+            new RequestUnitPurchasePacket() {
+                Name = name,
+                ShopIndex = shopIndex
             }.PacketToNetOutgoingMessage(message);
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }
 
         public void SendPurchaseXPRequest() {
             NetOutgoingMessage message = client.CreateMessage();
-            new PurchaseXPPacket().PacketToNetOutgoingMessage(message);
+            new RequestXPPurchasePacket().PacketToNetOutgoingMessage(message);
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }
 
         public void SellUnit(int seat, string character) {
             NetOutgoingMessage message = client.CreateMessage();
-            new SellUnitFromBenchPacket() {
+            new RequestUnitSellPacket() {
                 Name = character,
-                Seat = seat
+                Location = new BenchLocation() {
+                    seat = seat
+                }
             }.PacketToNetOutgoingMessage(message);
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }
 
         public void SellUnit(Hex hex) {
             NetOutgoingMessage message = client.CreateMessage();
-            new SellUnitFromBoardPacket() {
-                Coords = hex.coords,
-                Name = hex.unit
+            new RequestUnitSellPacket() {
+                Name = hex.unit,
+                Location = new BoardLocation() {
+                    coords = hex.coords
+                }
             }.PacketToNetOutgoingMessage(message);
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }
 
         public void MoveUnit(int seat, Hex hex, string character) {
             NetOutgoingMessage message = client.CreateMessage();
-            new MoveToBoardFromBenchPacket() {
-                FromSeat = seat,
-                ToCoords = hex.coords,
-                Character = character
+            new RequestMoveUnitPacket() {
+                From = new BenchLocation() {
+                    seat = seat
+                },
+                To = new BoardLocation() {
+                    coords = hex.coords
+                },
+                Name = character
+            }.PacketToNetOutgoingMessage(message);
+            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void MoveUnit(int fromSeat, int toSeat, string character) {
+            NetOutgoingMessage message = client.CreateMessage();
+            new RequestMoveUnitPacket() {
+                From = new BenchLocation() {
+                    seat = fromSeat
+                },
+                To = new BenchLocation() {
+                    seat = toSeat
+                },
+                Name = character
+            }.PacketToNetOutgoingMessage(message);
+            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void MoveUnit(Hex hex, int seat, string character) {
+            NetOutgoingMessage message = client.CreateMessage();
+            new RequestMoveUnitPacket() {
+                From = new BoardLocation() {
+                    coords = hex.coords
+                },
+                To = new BenchLocation() {
+                    seat = seat
+                },
+                Name = character
+            }.PacketToNetOutgoingMessage(message);
+            client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void MoveUnit(Hex fromHex, Hex toHex, string character) {
+            NetOutgoingMessage message = client.CreateMessage();
+            new RequestMoveUnitPacket() {
+                From = new BoardLocation() {
+                    coords = fromHex.coords
+                },
+                To = new BoardLocation() {
+                    coords = toHex.coords
+                },
+                Name = character
             }.PacketToNetOutgoingMessage(message);
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }

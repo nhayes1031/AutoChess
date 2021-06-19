@@ -10,7 +10,7 @@ namespace Client.UI {
             Manager.GameClient.UpdatePlayerInfo += DisplayXPLevel;
         }
 
-        private void DisplayXPLevel(UpdatePlayerInfoPacket packet) {
+        private void DisplayXPLevel(UpdatePlayerPacket packet) {
             xpText.text = "XP: " + packet.XP + "/" + DisplayExperienceToLevel(packet.Level);
         }
 

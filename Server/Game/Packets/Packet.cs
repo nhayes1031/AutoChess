@@ -5,7 +5,6 @@ namespace Server.Game {
         void NetIncomingMessageToPacket(NetIncomingMessage message);
     }
 
-   
     public interface IOutgoingPacket {
         void PacketToNetOutgoingMessage(NetOutgoingMessage message);
     }

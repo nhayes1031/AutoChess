@@ -16,8 +16,8 @@ namespace Client.UI {
         // TODO: Maybe this should be reading from the bench on UpdatePlayerInfo
         private void Start() {
             Manager.GameClient.UnitPurchased += HandleUnitPurchased;
-            Manager.GameClient.UnitSoldFromBench += HandleUnitSold;
-            Manager.GameClient.UnitMovedFromBenchToBoard += HandleUnitMoved;
+            Manager.GameClient.UnitSold += HandleUnitSold;
+            Manager.GameClient.UnitRepositioned += HandleUnitRepositioned;
 
             benchSlots = new UIBenchSlot[10] {
                 Instantiate(characterPrefab, grid.transform).GetComponent<UIBenchSlot>(),
@@ -41,8 +41,8 @@ namespace Client.UI {
 
         private void OnApplicationQuit() {
             Manager.GameClient.UnitPurchased -= HandleUnitPurchased;
-            Manager.GameClient.UnitSoldFromBench -= HandleUnitSold;
-            Manager.GameClient.UnitMovedFromBenchToBoard -= HandleUnitMoved;
+            Manager.GameClient.UnitSold -= HandleUnitSold;
+            Manager.GameClient.UnitRepositioned -= HandleUnitRepositioned;
         }
 
         private void HandleSeatSelected(int seat) {
@@ -70,16 +70,29 @@ namespace Client.UI {
             BenchFull?.Invoke(true);
         }
 
-        private void HandleUnitSold(SellUnitFromBenchPacket packet) {
-            benchSlots[packet.Seat].gameObject.SetActive(false);
-            benchSlots[packet.Seat].Clear();
-            BenchFull?.Invoke(false);
+        private void HandleUnitSold(UnitSoldPacket packet) {
+            if (packet.Location is BenchLocation) {
+                var location = (BenchLocation)packet.Location;
+                benchSlots[location.seat].gameObject.SetActive(false);
+                benchSlots[location.seat].Clear();
+                BenchFull?.Invoke(false);
+            }
         }
 
-        private void HandleUnitMoved(MoveToBoardFromBenchPacket packet) {
-            benchSlots[packet.FromSeat].gameObject.SetActive(false);
-            benchSlots[packet.FromSeat].Clear();
-            BenchFull?.Invoke(false);
+        private void HandleUnitRepositioned(UnitRepositionedPacket packet) {
+            if (packet.FromLocation is BenchLocation) {
+                var benchFromLocation = (BenchLocation)packet.FromLocation;
+                benchSlots[benchFromLocation.seat].gameObject.SetActive(false);
+                benchSlots[benchFromLocation.seat].Clear();
+            }
+
+            if (packet.ToLocation is BenchLocation) {
+                var benchToLocation = (BenchLocation)packet.ToLocation;
+                benchSlots[benchToLocation.seat].gameObject.SetActive(true);
+                benchSlots[benchToLocation.seat].AddUnit(packet.Name);
+            }
+
+            CheckForFullBench();
         }
     }
 }

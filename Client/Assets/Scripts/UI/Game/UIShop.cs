@@ -23,8 +23,9 @@ namespace Client.UI {
                 Instantiate(characterPrefab, grid.transform).GetComponent<UIShopCharacterSlot>()
             };
 
-            foreach (var slot in characterSlots) {
-                slot.SlotSelected += HandleSlotSelected;
+            for (int i = 0; i < characterSlots.Length; i++) {
+                characterSlots[i].Index = i;
+                characterSlots[i].SlotSelected += HandleSlotSelected;
             }
         }
 
@@ -37,7 +38,7 @@ namespace Client.UI {
 
         private void HandleSlotSelected(UIShopCharacterSlot slot) {
             if (canPurchase) {
-                Manager.GameClient.Purchase(slot.Name);
+                Manager.GameClient.Purchase(slot.Name, slot.Index);
             }
         }
 

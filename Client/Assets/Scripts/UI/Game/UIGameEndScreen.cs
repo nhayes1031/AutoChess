@@ -22,7 +22,7 @@ namespace Client.UI {
         }
 
         private void HandlePlayerDied(PlayerDiedPacket packet) {
-            if (packet.Who == Manager.GameClient.PlayerId) {
+            if (packet.Player == Manager.GameClient.PlayerId) {
                 mask.SetActive(true);
                 text.text = "Defeat";
             }

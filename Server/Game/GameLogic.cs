@@ -228,18 +228,12 @@ namespace Server.Game {
             server.SendMessage(message, connection, NetDeliveryMethod.ReliableOrdered);
         }
 
-        private void SendPurchaseUnitPacket(NetConnection connection, int shopIndex) {
-            NetOutgoingMessage message = server.CreateMessage();
-            new UnitPurchasedPacket() {
-                ShopIndex = shopIndex
-            }.PacketToNetOutgoingMessage(message);
-            server.SendMessage(message, connection, NetDeliveryMethod.ReliableOrdered);
-        }
-
         private void UnitPurchased(UnitPurchased e) {
             NetOutgoingMessage message = server.CreateMessage();
             new UnitPurchasedPacket() {
-                ShopIndex = e.shopIndex
+                ShopIndex = e.shopIndex,
+                Location = e.location,
+                Name = e.name,
             }.PacketToNetOutgoingMessage(message);
             server.SendMessage(message, e.connection, NetDeliveryMethod.ReliableOrdered);
         }

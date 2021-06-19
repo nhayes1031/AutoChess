@@ -16,7 +16,7 @@ namespace Server.Game.EC.Components {
             this.state = state;
             this.stats = stats;
 
-            attackingTimer = new Timer(stats.AttackSpeed) {
+            attackingTimer = new Timer(stats.AttackSpeed * 100) {
                 AutoReset = false
             };
             attackingTimer.Elapsed += HandleTimerExpired;

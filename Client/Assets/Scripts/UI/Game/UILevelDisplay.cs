@@ -14,7 +14,7 @@ namespace Client.UI {
             Manager.GameClient.UpdatePlayerInfo -= DisplayPlayerLevel;
         }
 
-        private void DisplayPlayerLevel(UpdatePlayerInfoPacket packet) {
+        private void DisplayPlayerLevel(UpdatePlayerPacket packet) {
             levelText.text = "Level: " + packet.Level;
         }
     }

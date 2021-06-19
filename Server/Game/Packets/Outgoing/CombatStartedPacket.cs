@@ -12,6 +12,7 @@ namespace Server.Game {
             message.Write((byte)OutgoingPacketTypes.CombatStarted);
             message.Write(BottomPlayer.ToString());
             message.Write(TopPlayer.ToString());
+            message.Write(Units.Count);
             foreach (var tuple in Units) {
                 message.Write(tuple.Item1);
                 message.Write(tuple.Item2.coords.q);

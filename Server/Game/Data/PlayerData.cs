@@ -78,15 +78,26 @@ namespace Server.Game {
                 if (Gold >= 0) {
                     Gold -= 0;
 
+                    // Have to verify a character is at that index still
                     var character = Shop[shopIndex];
-                    Shop[shopIndex] = null;
-                    var starEntity = new StarEntity(character);
-                    Bench.Add(starEntity);
-                    Hub.Default.Publish(new UnitPurchased {
-                        connection = Connection,
-                        shopIndex = shopIndex
-                    });
-                    TryCombineUnits(starEntity);
+                    if (!(character is null)) {
+                        Shop[shopIndex] = null;
+                        var starEntity = new StarEntity(character);
+                        var index = Bench.Add(starEntity);
+                        if (!(index is null)) {
+                            Hub.Default.Publish(new UnitPurchased {
+                                connection = Connection,
+                                shopIndex = shopIndex,
+                                name = starEntity.Name,
+                                location = new BenchLocation() { seat = index.Value },
+                            });
+                            TryCombineUnits(starEntity);
+                        } else {
+                            Logger.Error("Failed to add a unit to the bench because there were no open seats.");
+                        }
+                    } else {
+                        Logger.Error("Someone tried to request a shop index that doesn't have a character.");
+                    }
                 } else {
                     Logger.Error("Someone tried to request a character that they didn't have enough gold for!");
                 }

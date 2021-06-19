@@ -10,7 +10,7 @@ public class UITransitionDisplay : MonoBehaviour {
         Manager.GameClient.TransitionUpdate += DisplayTransitionUpdate;
     }
 
-    private void DisplayTransitionUpdate(TransitionUpdatePacket packet) {
+    private void DisplayTransitionUpdate(StateTransitionPacket packet) {
         transitionText.text = packet.Event;
     }
 }

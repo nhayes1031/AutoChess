@@ -9,15 +9,15 @@ namespace Client.UI {
         private void Start() {
             textField.gameObject.SetActive(false);
 
-            Manager.GameClient.SimulationEndedInVictory += HandleVictory;
-            Manager.GameClient.SimulationEndedInLoss += HandleLoss;
-            Manager.GameClient.SimulationEndedInDraw += HandleDraw;
+            Manager.GameClient.CombatEndedInVictory += HandleVictory;
+            Manager.GameClient.CombatEndedInLoss += HandleLoss;
+            Manager.GameClient.CombatEndedInDraw += HandleDraw;
         }
 
         private void OnDestroy() {
-            Manager.GameClient.SimulationEndedInVictory -= HandleVictory;
-            Manager.GameClient.SimulationEndedInLoss -= HandleLoss;
-            Manager.GameClient.SimulationEndedInDraw -= HandleDraw;
+            Manager.GameClient.CombatEndedInVictory -= HandleVictory;
+            Manager.GameClient.CombatEndedInLoss -= HandleLoss;
+            Manager.GameClient.CombatEndedInDraw -= HandleDraw;
         }
 
         private void HandleVictory() {

@@ -14,7 +14,7 @@ namespace Client.UI {
             Manager.GameClient.UpdatePlayerInfo -= DisplayPlayerGold;
         }
 
-        private void DisplayPlayerGold(UpdatePlayerInfoPacket packet) {
+        private void DisplayPlayerGold(UpdatePlayerPacket packet) {
             goldText.text = "Gold: " + packet.Gold;
         }
     }

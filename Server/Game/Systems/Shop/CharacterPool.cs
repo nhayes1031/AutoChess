@@ -29,7 +29,14 @@ namespace Server.Game.Systems {
 
         public CharacterPool() {
             var characters = new Dictionary<int, List<Breed>>();
-            GetCharacters().ForEach(c => characters[c.Cost].Add(c));
+            GetCharacters().ForEach(c => {
+                if (characters.ContainsKey(c.Cost))
+                    characters[c.Cost].Add(c);
+                else {
+                    characters[c.Cost] = new List<Breed>();
+                    characters[c.Cost].Add(c);
+                }
+            });
 
             Tier1 = new PoolTier(45, characters[1]);
             Tier2 = new PoolTier(30, characters[2]);
@@ -41,7 +48,7 @@ namespace Server.Game.Systems {
         }
 
         private static List<Breed> GetCharacters() {
-            return JsonConvert.DeserializeObject<List<Breed>>(File.ReadAllText(@"./characters.json"));
+            return JsonConvert.DeserializeObject<List<Breed>>(File.ReadAllText(@"./Data/characters.json"));
         }
 
         public Breed[] Pop(int amount, int playerLevel) {

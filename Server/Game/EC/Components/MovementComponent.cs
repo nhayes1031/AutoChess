@@ -13,7 +13,7 @@ namespace Server.Game.EC.Components {
         public MovementComponent(Hub hub, StatsComponent stats) {
             this.hub = hub;
 
-            movingTimer = new Timer(stats.MovementSpeed) {
+            movingTimer = new Timer(stats.MovementSpeed * 100) {
                 AutoReset = false
             };
             movingTimer.Elapsed += HandleTimerExpired;
@@ -35,9 +35,9 @@ namespace Server.Game.EC.Components {
         }
 
         private void HandleTimerExpired() {
-            hub.Publish(new UnitMovedPacket() {
-                FromCoords = new BoardLocation() { coords = position.coords },
-                ToCoords = new BoardLocation() { coords = hexToMoveTo.coords },
+            hub.Publish(new UnitMoved() {
+                fromCoords = position.coords,
+                toCoords = hexToMoveTo.coords,
             });
 
             position.RemoveEntity();

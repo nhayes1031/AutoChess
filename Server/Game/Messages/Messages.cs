@@ -66,6 +66,8 @@ namespace Server.Game.Messages {
     public struct UnitPurchased {
         public NetConnection connection;
         public int shopIndex;
+        public string name;
+        public ILocation location;
     }
     public struct UnitLeveledUp {
         public NetConnection connection;

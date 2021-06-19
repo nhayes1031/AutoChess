@@ -13,9 +13,8 @@ namespace Client.UI {
             FindObjectOfType<UIBench>().SeatSelected += HandleSeatSelected;
             FindObjectOfType<UIBoard>().HexSelected += HandleHexSelected;
 
-            Manager.GameClient.UnitSoldFromBench += HandleUnitSold;
-            Manager.GameClient.UnitSoldFromBoard += HandleUnitSold;
-            Manager.GameClient.UnitMovedFromBenchToBoard += HandleUnitMovedFromBenchToBoard;
+            Manager.GameClient.UnitSold += HandleUnitSold;
+            Manager.GameClient.UnitRepositioned += HandleUnitRepositioned;
         }
 
         private void HandleSeatSelected(int seat, string character) {
@@ -42,23 +41,26 @@ namespace Client.UI {
             }
         }
 
-        private void HandleUnitSold(SellUnitFromBenchPacket packet) {
-            if (packet.Seat == seat) {
-                seat = null;
-                hex = null;
-                text.text = "";
+        private void HandleUnitSold(UnitSoldPacket packet) {
+            if (packet.Location is BenchLocation) {
+                var location = (BenchLocation)packet.Location;
+                if (location.seat == seat) {
+                    seat = null;
+                    hex = null;
+                    text.text = "";
+                }
+            }
+            else if (packet.Location is BoardLocation) {
+                var location = (BoardLocation)packet.Location;
+                if (location.coords == hex.coords) {
+                    hex = null;
+                    seat = null;
+                    text.text = "";
+                }
             }
         }
 
-        private void HandleUnitSold(SellUnitFromBoardPacket packet) {
-            if (packet.Coords == hex.coords) {
-                hex = null;
-                seat = null;
-                text.text = "";
-            }
-        }
-
-        private void HandleUnitMovedFromBenchToBoard(MoveToBoardFromBenchPacket packet) {
+        private void HandleUnitRepositioned(UnitRepositionedPacket packet) {
             hex = null;
             seat = null;
             text.text = "";

@@ -1,4 +1,6 @@
-﻿namespace Server.Game {
+﻿using System.Collections.Generic;
+
+namespace Server.Game {
     public class FixedSizeList<T> {
         private T[] list;
 
@@ -40,14 +42,14 @@
             }
         }
 
-        public bool Add(T entry) {
+        public int? Add(T entry) {
             for (int i = 0; i < Size; i++) {
                 if (list[i] is null) {
                     list[i] = entry;
-                    return true;
+                    return i;
                 }
             }
-            return false;
+            return null;
         }
 
         public bool AddRange(T[] entries) {

@@ -13,8 +13,8 @@ namespace Server.Game {
         public int Cost => cost;
         public int Health => health;
         public int AttackRange => breed.AttackRange;
-        public int AttackSpeed => breed.AttackSpeed;
-        public int AttackDamage => AttackDamage;
+        public float AttackSpeed => breed.AttackSpeed;
+        public int AttackDamage => attackDamage;
         public int Armor => breed.Armor;
         public int MagicResist => breed.MagicResist;
         public int Movespeed => breed.Movespeed;

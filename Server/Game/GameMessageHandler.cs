@@ -54,9 +54,9 @@ namespace Server.Game {
                                 hub.Publish(new PurchaseXPRequested() { client = message.SenderConnection });
                                 break;
                             case ((byte)IncomingPacketTypes.RequestUnitPurchase):
-                                Logger.Info("Unit purchase requested by " + message.SenderConnection);
                                 packet = new RequestUnitPurchasePacket();
                                 packet.NetIncomingMessageToPacket(message);
+                                Logger.Info("Unit purchase requested by " + message.SenderConnection + " at index " + ((RequestUnitPurchasePacket)packet).ShopIndex);
                                 hub.Publish(new PurchaseUnitRequested() { client = message.SenderConnection, packet = (RequestUnitPurchasePacket)packet });
                                 break;
                             case ((byte)IncomingPacketTypes.RequestMoveUnit):

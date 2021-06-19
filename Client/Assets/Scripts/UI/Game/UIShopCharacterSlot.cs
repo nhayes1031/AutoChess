@@ -11,6 +11,7 @@ namespace Client.UI {
         [SerializeField] private Image background = null;
 
         public string Name => text.text;
+        public int Index = 0;
 
         public void Initialize(string name) {
             text.text = name;

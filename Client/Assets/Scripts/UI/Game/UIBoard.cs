@@ -32,37 +32,37 @@ namespace Client.UI {
                 }
             }
 
-            Manager.GameClient.UnitSoldFromBoard += HandleUnitSold;
-            Manager.GameClient.UnitMovedFromBenchToBoard += HandleUnitMoved;
-            Manager.GameClient.SimulationUnitMoved += HandleSimulationUnitMoved;
-            Manager.GameClient.SimulationUnitAttacked += HandleSimulationUnitAttacked;
-            Manager.GameClient.SimulationCombatStarted += HandleSimulationCombatStarted;
-            Manager.GameClient.SimulationEndedInDraw += ResetBoard;
-            Manager.GameClient.SimulationEndedInVictory += ResetBoard;
-            Manager.GameClient.SimulationEndedInLoss += ResetBoard;
-            Manager.GameClient.SimulationUnitDied += HandleSimulationUnitDied;
+            Manager.GameClient.UnitSold += HandleUnitSold;
+            Manager.GameClient.UnitRepositioned += HandleUnitRepositioned;
+            Manager.GameClient.UnitMoved += HandleUnitMoved;
+            Manager.GameClient.UnitAttacked += HandleUnitAttacked;
+            Manager.GameClient.CombatStarted += HandleCombatStarted;
+            Manager.GameClient.CombatEndedInDraw += ResetBoard;
+            Manager.GameClient.CombatEndedInVictory += ResetBoard;
+            Manager.GameClient.CombatEndedInLoss += ResetBoard;
+            Manager.GameClient.UnitDied += HandleUnitDied;
         }
 
         private void OnDestroy() {
-            Manager.GameClient.UnitSoldFromBoard -= HandleUnitSold;
-            Manager.GameClient.UnitMovedFromBenchToBoard -= HandleUnitMoved;
-            Manager.GameClient.SimulationUnitMoved -= HandleSimulationUnitMoved;
-            Manager.GameClient.SimulationUnitAttacked -= HandleSimulationUnitAttacked;
-            Manager.GameClient.SimulationCombatStarted -= HandleSimulationCombatStarted;
-            Manager.GameClient.SimulationEndedInDraw -= ResetBoard;
-            Manager.GameClient.SimulationEndedInVictory -= ResetBoard;
-            Manager.GameClient.SimulationEndedInLoss -= ResetBoard;
-            Manager.GameClient.SimulationUnitDied -= HandleSimulationUnitDied;
+            Manager.GameClient.UnitSold -= HandleUnitSold;
+            Manager.GameClient.UnitRepositioned -= HandleUnitRepositioned;
+            Manager.GameClient.UnitMoved -= HandleUnitMoved;
+            Manager.GameClient.UnitAttacked -= HandleUnitAttacked;
+            Manager.GameClient.CombatStarted -= HandleCombatStarted;
+            Manager.GameClient.CombatEndedInDraw -= ResetBoard;
+            Manager.GameClient.CombatEndedInVictory -= ResetBoard;
+            Manager.GameClient.CombatEndedInLoss -= ResetBoard;
+            Manager.GameClient.UnitDied -= HandleUnitDied;
         }
 
-        private void HandleSimulationUnitDied(SimulationUnitDiedPacket packet) {
-            var offset = packet.Unit.ToOffset(flipCoords);
+        private void HandleUnitDied(UnitDiedPacket packet) {
+            var offset = packet.Location.coords.ToOffset(flipCoords);
             grid[offset.y, offset.x].RemoveUnit();
         }
 
-        private void HandleSimulationUnitMoved(SimulationUnitMovedPacket packet) {
-            var fromOffset = packet.FromCoords.ToOffset(flipCoords);
-            var toOffset = packet.ToCoords.ToOffset(flipCoords);
+        private void HandleUnitMoved(UnitMovedPacket packet) {
+            var fromOffset = packet.FromCoords.coords.ToOffset(flipCoords);
+            var toOffset = packet.ToCoords.coords.ToOffset(flipCoords);
 
             var unit = grid[fromOffset.y, fromOffset.x].RemoveUnit();
             grid[toOffset.y, toOffset.x].AddUnit(unit);
@@ -79,9 +79,9 @@ namespace Client.UI {
             Destroy(sprite, 0.25f);
         }
 
-        private void HandleSimulationUnitAttacked(SimulationUnitAttackedPacket packet) {
-            var attackerOffset = packet.Attacker.ToOffset(flipCoords);
-            var defenderOffset = packet.Defender.ToOffset(flipCoords);
+        private void HandleUnitAttacked(UnitAttackedPacket packet) {
+            var attackerOffset = packet.Attacker.coords.ToOffset(flipCoords);
+            var defenderOffset = packet.Defender.coords.ToOffset(flipCoords);
 
             SpawnAttackSprite(grid[attackerOffset.y, attackerOffset.x], grid[defenderOffset.y, defenderOffset.x]);
         }
@@ -99,21 +99,21 @@ namespace Client.UI {
             Destroy(sprite, 0.25f);
         }
 
-        private void HandleSimulationCombatStarted(SimulationCombatStartedPacket packet) {
+        private void HandleCombatStarted(CombatStartedPacket packet) {
             CreateSnapshot();
 
             ClearBoard();
 
-            if (packet.bottomPlayer == Manager.GameClient.PlayerId) {
+            if (packet.BottomPlayer == Manager.GameClient.PlayerId) {
                 flipCoords = false;
             } else {
                 flipCoords = true;
             }
 
-            foreach (var unit in packet.units) {
-                var offsetCoords = unit.position.ToOffset(flipCoords);
+            foreach (var unit in packet.Units) {
+                var offsetCoords = unit.Item2.coords.ToOffset(flipCoords);
                 grid[offsetCoords.y, offsetCoords.x].RemoveUnit();
-                grid[offsetCoords.y, offsetCoords.x].AddUnit(unit.name);
+                grid[offsetCoords.y, offsetCoords.x].AddUnit(unit.Item1);
             }
         }
 
@@ -157,24 +157,42 @@ namespace Client.UI {
             HexSelected?.Invoke(hex);
         }
 
-        private void HandleUnitSold(SellUnitFromBoardPacket packet) {
-            var offsetCoords = packet.Coords.ToOffset();
-            if (offsetCoords.x < 0 || offsetCoords.x > WIDTH) return;
-            if (offsetCoords.y < 0 || offsetCoords.y > HEIGHT) return;
+        private void HandleUnitSold(UnitSoldPacket packet) {
+            if (packet.Location is BoardLocation) {
+                var location = (BoardLocation)packet.Location;
+                var offsetCoords = location.coords.ToOffset();
+                if (offsetCoords.x < 0 || offsetCoords.x > WIDTH) return;
+                if (offsetCoords.y < 0 || offsetCoords.y > HEIGHT) return;
 
-            var hex = grid[offsetCoords.y, offsetCoords.x];
-            if (hex.Coords == packet.Coords) {
-                hex.RemoveUnit();
+                var hex = grid[offsetCoords.y, offsetCoords.x];
+                if (hex.Coords == location.coords) {
+                    hex.RemoveUnit();
+                }
             }
         }
 
-        private void HandleUnitMoved(MoveToBoardFromBenchPacket packet) {
-            var offsetCoords = packet.ToCoords.ToOffset();
-            if (offsetCoords.x < 0 || offsetCoords.x > WIDTH) return;
-            if (offsetCoords.y < 0 || offsetCoords.y > HEIGHT) return;
+        private void HandleUnitRepositioned(UnitRepositionedPacket packet) {
+            if (packet.FromLocation is BoardLocation) {
+                var boardFromLocation = (BoardLocation)packet.FromLocation;
+                var offsetCoords = boardFromLocation.coords.ToOffset();
+                if (offsetCoords.x < 0 || offsetCoords.x > WIDTH) return;
+                if (offsetCoords.y < 0 || offsetCoords.y > HEIGHT) return;
 
-            var hex = grid[offsetCoords.y, offsetCoords.x];
-            hex.AddUnit(packet.Character);
+                var hex = grid[offsetCoords.y, offsetCoords.x];
+                if (hex.Unit == packet.Name)
+                    hex.RemoveUnit();
+            }
+
+            if (packet.ToLocation is BoardLocation) {
+                var boardToLocation = (BoardLocation)packet.ToLocation;
+                var offsetCoords = boardToLocation.coords.ToOffset();
+                if (offsetCoords.x < 0 || offsetCoords.x > WIDTH) return;
+                if (offsetCoords.y < 0 || offsetCoords.y > HEIGHT) return;
+
+                var hex = grid[offsetCoords.y, offsetCoords.x];
+                if (String.IsNullOrEmpty(hex.Unit))
+                    hex.AddUnit(packet.Name);
+            }
         }
     }
 }

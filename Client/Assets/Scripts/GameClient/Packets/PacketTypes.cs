@@ -1,27 +1,34 @@
 ﻿namespace Client.Game {
-    public enum PacketTypes {
+    public enum OutgoingPacketTypes {
+        Connect,
+        Disconnect,
+        RequestMoveUnit,
+        RequestReroll,
+        RequestUnitPurchase,
+        RequestXPPurchase,
+        RequestUnitSell,
+    }
+
+    public enum IncomingPacketTypes {
         Connect,
         Disconnect,
         InitialGameSetup,
-        TransitionUpdate,
-        UpdatePlayerInfo,
-        PurchaseUnit,
-        PurchaseXP,
-        PurchaseReroll,
-        MoveToBoardFromBench,
-        RepositionOnBoard,
-        MoveToBenchFromBoard,
-        RepositionOnBench,
-        SellUnitFromBench,
-        SellUnitFromBoard,
-        SimulationUnitMoved,
-        SimulationUnitAttacked,
-        SimulationEndedInDraw,
-        SimulationEndedInVictory,
-        SimulationEndedInLoss,
-        SimulationCombatStarted,
-        SimulationUnitDied,
+        StateTransition,
+        UpdatePlayer,
+        UnitRepositioned,
+        RerollPurchased,
+        UnitPurchased,
+        UnitLeveledUp,
+        UnitSold,
+        XPPurchased,
         PlayerDied,
-        GameOver
+        GameOver,
+        CombatStarted,
+        UnitAttacked,
+        UnitMoved,
+        UnitDied,
+        CombatEndedInDraw,
+        CombatEndedInVictory,
+        CombatEndedInLoss
     }
 }
